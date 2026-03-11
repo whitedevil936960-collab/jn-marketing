@@ -1,41 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Reports</title>
+<title>Sales Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background: linear-gradient(135deg,#141e30,#243b55);
+color:white;
+text-align:center;
+padding:30px;
+}
+.card{
+background:rgba(255,255,255,0.1);
+padding:25px;
+border-radius:15px;
+backdrop-filter:blur(10px);
+max-width:500px;
+margin:auto;
+}
+.order{
+background:rgba(255,255,255,0.2);
+margin:10px 0;
+padding:10px;
+border-radius:8px;
+}
+.total{
+font-size:20px;
+color:#00ffcc;
+margin-top:20px;
+}
+</style>
 </head>
 <body>
 
+<div class="card">
 <h2>Sales Report</h2>
-
 <div id="report"></div>
+</div>
 
 <script>
 
-let user = JSON.parse(localStorage.getItem("user"));
+let user=JSON.parse(localStorage.getItem("user"));
+if(!user){window.location="index.html";}
 
-if(!user){
-  window.location="index.html";
-}
+let orders=JSON.parse(localStorage.getItem("orders")||"[]");
 
-let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+let totalSale=0;
+let html="";
 
-let totalSale = 0;
-let html = "";
-
-if(orders.length === 0){
-  html = "No Orders Yet";
+if(orders.length==0){
+html="No Orders Yet";
 }else{
-
-orders.forEach(o => {
-  html += "<p>₹" + o.total + "</p>";
-  totalSale += o.total;
+orders.forEach(o=>{
+html+="<div class='order'>"+o.product+"<br>₹"+o.total+"</div>";
+totalSale+=o.total;
 });
-
-html += "<hr>";
-html += "<h3>Total Sale: ₹" + totalSale + "</h3>";
+html+="<div class='total'>Total Sale: ₹"+totalSale.toFixed(2)+"</div>";
 }
 
-document.getElementById("report").innerHTML = html;
+document.getElementById("report").innerHTML=html;
 
 </script>
 
