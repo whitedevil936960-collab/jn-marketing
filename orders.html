@@ -1,65 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>JN Marketing - Order</title>
+<title>Order Management</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{
-font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:white;
-padding:20px;
-}
-.card{
-background:rgba(255,255,255,0.1);
-padding:20px;
-border-radius:15px;
-max-width:800px;
-margin:auto;
-backdrop-filter:blur(10px);
-}
-input,select{
-width:100%;
-padding:10px;
-margin:8px 0;
-border-radius:8px;
-border:none;
-}
-button{
-padding:10px;
-margin:8px 0;
-border:none;
-border-radius:8px;
-background:linear-gradient(to right,#00c6ff,#0072ff);
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-.item{
-background:rgba(255,255,255,0.2);
-padding:8px;
-margin:5px 0;
-border-radius:8px;
-}
-.total{
-font-size:18px;
-color:#00ffcc;
-margin-top:10px;
-}
+body{font-family:Segoe UI;background:#1e3c72;color:white;padding:20px;}
+.card{background:#ffffff20;padding:20px;border-radius:12px;max-width:900px;margin:auto;}
+input,select{width:100%;padding:8px;margin:5px 0;border-radius:6px;border:none;}
+button{padding:8px 12px;margin:5px;border:none;border-radius:6px;background:#00c6ff;color:white;cursor:pointer;}
+.item{background:#ffffff30;padding:6px;margin:4px 0;border-radius:6px;}
 </style>
 </head>
 <body>
 
 <div class="card">
-
 <h2>Place Order</h2>
 
 <input id="customer" placeholder="Dukandar Name">
 <input id="address" placeholder="Address">
-<input id="mobile" placeholder="Mobile Number">
+<input id="mobile" placeholder="Mobile">
 
 <select id="payment">
-<option value="">Select Payment Status</option>
+<option value="">Payment Status</option>
 <option value="Received">Received</option>
 <option value="Pending">Pending</option>
 </select>
@@ -68,19 +30,7 @@ margin-top:10px;
 <option value="">Select Product</option>
 <option value="45">Janta - ₹45</option>
 <option value="70">3T - ₹70</option>
-<option value="99">Jumbo - ₹99</option>
 <option value="155">Gala King Kong - ₹155</option>
-<option value="32">SS Scrub - ₹32</option>
-<option value="11">NS Scrub - ₹11</option>
-<option value="32.70">Super Scrub - ₹32.70</option>
-<option value="172.50">Gala Wiper - ₹172.50</option>
-<option value="22">Dishwash 250g - ₹22</option>
-<option value="42">Dishwash 500g - ₹42</option>
-<option value="60">Handwash 250ml - ₹60</option>
-<option value="42">Floor Cleaner 1L - ₹42</option>
-<option value="400">Floor Cleaner 5L - ₹400</option>
-<option value="30">Toilet Cleaner 250ml - ₹30</option>
-<option value="92">Toilet Cleaner 500ml - ₹92</option>
 </select>
 
 <input id="qty" type="number" placeholder="Quantity">
@@ -88,63 +38,54 @@ margin-top:10px;
 <button onclick="addProduct()">Add Product</button>
 
 <div id="cart"></div>
-<div class="total" id="grandTotal">Grand Total: ₹0</div>
+<h3 id="grandTotal">Total: ₹0</h3>
 
 <button onclick="saveOrder()">Submit Order</button>
+
+<hr>
+<h2>All Orders</h2>
+<div id="orderList"></div>
 
 </div>
 
 <script>
 
-let user = JSON.parse(localStorage.getItem("user"));
-if(!user){window.location="index.html";}
-
 let cart=[];
 let grandTotal=0;
 
 function addProduct(){
-
 let productSelect=document.getElementById("product");
 let productName=productSelect.options[productSelect.selectedIndex].text;
 let rate=parseFloat(productSelect.value);
 let qty=parseFloat(document.getElementById("qty").value);
 
-if(!rate || !qty){
-alert("Select product & quantity");
-return;
-}
+if(!rate || !qty){alert("Select product & qty");return;}
 
 let total=rate*qty;
 
-cart.push({name:productName,rate:rate,qty:qty,total:total});
+cart.push({name:productName,rate,qty,total});
 grandTotal+=total;
 
 updateCart();
-document.getElementById("qty").value="";
 }
 
 function updateCart(){
 let html="";
-cart.forEach(item=>{
-html+=`<div class="item">
-<b>${item.name}</b><br>
-Rate: ₹${item.rate} | Qty: ${item.qty}<br>
-Total: ₹${item.total}
-</div>`;
+cart.forEach(i=>{
+html+=`<div class="item">${i.name} | ₹${i.rate} x ${i.qty} = ₹${i.total}</div>`;
 });
 document.getElementById("cart").innerHTML=html;
-document.getElementById("grandTotal").innerHTML="Grand Total: ₹"+grandTotal.toFixed(2);
+document.getElementById("grandTotal").innerHTML="Total: ₹"+grandTotal;
 }
 
 function saveOrder(){
-
 let customer=document.getElementById("customer").value;
 let address=document.getElementById("address").value;
 let mobile=document.getElementById("mobile").value;
 let payment=document.getElementById("payment").value;
 
-if(customer=="" || address=="" || mobile=="" || payment=="" || cart.length==0){
-alert("Fill all details & add products");
+if(!customer||!address||!mobile||!payment||cart.length==0){
+alert("Fill all details");
 return;
 }
 
@@ -152,27 +93,39 @@ let orders=JSON.parse(localStorage.getItem("orders")||"[]");
 
 orders.push({
 customer,address,mobile,payment,
-salesman:user.name,
-role:user.role,
-items:cart,
-total:grandTotal,
-date:new Date().toLocaleDateString(),
-time:new Date().toLocaleTimeString()
+items:cart,total:grandTotal,
+date:new Date().toLocaleString()
 });
 
 localStorage.setItem("orders",JSON.stringify(orders));
 
-alert("Order Submitted Successfully!");
-
-cart=[];
-grandTotal=0;
+cart=[];grandTotal=0;
 updateCart();
-
-document.getElementById("customer").value="";
-document.getElementById("address").value="";
-document.getElementById("mobile").value="";
-document.getElementById("payment").value="";
+loadOrders();
 }
+
+function deleteOrder(index){
+let orders=JSON.parse(localStorage.getItem("orders"));
+orders.splice(index,1);
+localStorage.setItem("orders",JSON.stringify(orders));
+loadOrders();
+}
+
+function loadOrders(){
+let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+let html="";
+orders.forEach((o,i)=>{
+html+=`<div class="item">
+<b>${o.customer}</b> (${o.payment})<br>
+₹${o.total}<br>
+${o.date}<br>
+<button onclick="deleteOrder(${i})">Delete</button>
+</div>`;
+});
+document.getElementById("orderList").innerHTML=html;
+}
+
+loadOrders();
 
 </script>
 
