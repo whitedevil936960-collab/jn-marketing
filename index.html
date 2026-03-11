@@ -4,6 +4,9 @@
 <title>JN Marketing Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- PWA Support -->
+<link rel="manifest" href="manifest.json">
+
 <style>
 body{
   margin:0;
@@ -20,7 +23,7 @@ body{
   padding:40px;
   border-radius:15px;
   width:90%;
-  max-width:350px;
+  max-width:380px;
   text-align:center;
   box-shadow:0 0 25px rgba(0,0,0,0.3);
 }
@@ -62,8 +65,8 @@ button:hover{
   color:#777;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="card">
@@ -83,43 +86,4 @@ button:hover{
 
 function loginUser(){
 
-let email = document.getElementById("email").value.trim();
-
-let users = [
-
-  {
-    name:"Chandrabhaskar",
-    email:"maurya.chandrabhaskar@gmail.com",
-    role:"CMO"
-  },
-
-  {
-    name:"Rohit",
-    email:"rohit@gmail.com",
-    role:"TL"
-  },
-
-  {
-    name:"Amit",
-    email:"amit@gmail.com",
-    role:"FSI"
-  }
-
-];
-
-let user = users.find(u => u.email === email);
-
-if(!user){
-  alert("User Not Found! Please check email.");
-  return;
-}
-
-localStorage.setItem("user", JSON.stringify(user));
-window.location="dashboard.html";
-
-}
-
-</script>
-
-</body>
-</html>
+let email = document.getElementById("email").value
