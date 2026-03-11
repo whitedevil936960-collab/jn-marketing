@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Attendance System</title>
+<title>Attendance</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
 font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+background:linear-gradient(135deg,#141e30,#243b55);
 color:white;
 padding:20px;
 }
@@ -20,7 +20,6 @@ backdrop-filter:blur(10px);
 }
 button{
 padding:10px;
-margin:10px 0;
 border:none;
 border-radius:8px;
 background:linear-gradient(to right,#00c6ff,#0072ff);
@@ -40,7 +39,7 @@ border-radius:8px;
 
 <div class="card">
 
-<h2>Attendance System</h2>
+<h2>Attendance</h2>
 <h3 id="userInfo"></h3>
 
 <button onclick="markAttendance()">Mark Attendance</button>
@@ -52,15 +51,14 @@ border-radius:8px;
 
 <script>
 
-let user = JSON.parse(localStorage.getItem("user"));
+let user=JSON.parse(localStorage.getItem("user"));
 if(!user){window.location="index.html";}
 
-document.getElementById("userInfo").innerHTML=
-user.name + " (" + user.role + ")";
+document.getElementById("userInfo").innerHTML=user.name+" ("+user.role+")";
 
 function markAttendance(){
 
-let attendance = JSON.parse(localStorage.getItem("attendance")||"[]");
+let attendance=JSON.parse(localStorage.getItem("attendance")||"[]");
 
 attendance.push({
 name:user.name,
@@ -78,7 +76,7 @@ loadAttendance();
 
 function loadAttendance(){
 
-let attendance = JSON.parse(localStorage.getItem("attendance")||"[]");
+let attendance=JSON.parse(localStorage.getItem("attendance")||"[]");
 let html="";
 
 attendance.forEach(a=>{
