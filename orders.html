@@ -98,33 +98,34 @@ border-radius:10px;
 <div id="cart"></div>
 <div class="total" id="grandTotal">Grand Total: ₹0</div>
 
-<button onclick="saveOrder()">Submit Order</button>
+<button onclick="submitOrder()">Submit Order</button>
 
 <hr>
-<h2>All Orders</h2>
+<h2>All Orders / Sales Report</h2>
 <div id="orderList"></div>
 
 </div>
 
 <script>
 
-let user = JSON.parse(localStorage.getItem("user"));
-if(!user){window.location="index.html";}
+// Dummy login user (replace with real login)
+let user = JSON.parse(localStorage.getItem("user")) || {name:"Rohit",role:"TL"};
 
 let cart=[];
 let grandTotal=0;
 
 function addProduct(){
 let select=document.getElementById("product");
-if(select.value==""){alert("Select product");return;}
+if(select.value==""){alert("Select product"); return;}
 
 let name=select.options[select.selectedIndex].text;
 let rate=parseFloat(select.value);
 let qty=parseFloat(document.getElementById("qty").value);
 
-if(!qty){alert("Enter quantity");return;}
+if(!qty){alert("Enter quantity"); return;}
 
 let total=rate*qty;
+
 cart.push({name,rate,qty,total});
 updateCart();
 document.getElementById("qty").value="";
@@ -138,93 +139,9 @@ grandTotal+=item.total;
 html+=`<div class="item">
 <b>${item.name}</b><br>
 Rate ₹${item.rate} | Qty ${item.qty} | Total ₹${item.total}<br>
-<button class="edit-btn" onclick="editItem(${index})">Edit</button>
-<button class="delete-btn" onclick="deleteItem(${index})">Delete</button>
+<button class="edit-btn" onclick="editCartItem(${index})">Edit</button>
+<button class="delete-btn" onclick="deleteCartItem(${index})">Delete</button>
 </div>`;
 });
 document.getElementById("cart").innerHTML=html;
-document.getElementById("grandTotal").innerHTML="Grand Total: ₹"+grandTotal.toFixed(2);
-}
-
-function editItem(index){
-let newQty=prompt("Enter new quantity:",cart[index].qty);
-if(newQty==null) return;
-newQty=parseFloat(newQty);
-if(!newQty) return;
-cart[index].qty=newQty;
-cart[index].total=cart[index].rate*newQty;
-updateCart();
-}
-
-function deleteItem(index){
-cart.splice(index,1);
-updateCart();
-}
-
-function saveOrder(){
-
-let customer=document.getElementById("customer").value;
-let address=document.getElementById("address").value;
-let mobile=document.getElementById("mobile").value;
-let payment=document.getElementById("payment").value;
-
-if(!customer||!address||!mobile||!payment||cart.length==0){
-alert("Fill all details");
-return;
-}
-
-let orders=JSON.parse(localStorage.getItem("orders")||"[]");
-
-orders.push({
-customer,address,mobile,payment,
-salesman:user.name,
-role:user.role,
-items:cart,
-total:grandTotal,
-datetime:new Date().toLocaleString()
-});
-
-localStorage.setItem("orders",JSON.stringify(orders));
-
-cart=[];
-updateCart();
-
-document.getElementById("customer").value="";
-document.getElementById("address").value="";
-document.getElementById("mobile").value="";
-document.getElementById("payment").value="";
-
-loadOrders();
-}
-
-function loadOrders(){
-
-let orders=JSON.parse(localStorage.getItem("orders")||"[]");
-let html="";
-
-orders.forEach(order=>{
-
-html+=`<div class="order-box">
-<b>Dukandar:</b> ${order.customer}<br>
-<b>Address:</b> ${order.address}<br>
-<b>Mobile:</b> ${order.mobile}<br>
-<b>Salesman:</b> ${order.salesman} (${order.role})<br>
-<b>Payment:</b> ${order.payment}<br>
-<b>Date & Time:</b> ${order.datetime}<br><br>`;
-
-order.items.forEach(p=>{
-html+=`${p.name} | ₹${p.rate} x ${p.qty} = ₹${p.total}<br>`;
-});
-
-html+=`<b>Total:</b> ₹${order.total}</div>`;
-});
-
-document.getElementById("orderList").innerHTML=html;
-}
-
-loadOrders();
-
-</script>
-
-</body>
-</html>
+document.get
