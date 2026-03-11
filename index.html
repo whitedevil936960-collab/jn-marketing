@@ -86,4 +86,43 @@ button:hover{
 
 function loginUser(){
 
-let email = document.getElementById("email").value
+let email = document.getElementById("email").value.trim().toLowerCase();
+
+let users = [
+
+{
+name:"Chandrabhaskar",
+email:"maurya.chandrabhaskar@gmail.com",
+role:"CMO"
+},
+
+{
+name:"Rohit",
+email:"rohit@gmail.com",
+role:"TL"
+},
+
+{
+name:"Amit",
+email:"amit@gmail.com",
+role:"FSI"
+}
+
+];
+
+let user = users.find(u => u.email === email);
+
+if(!user){
+  alert("User Not Found! Please check email.");
+  return;
+}
+
+localStorage.setItem("user", JSON.stringify(user));
+window.location="dashboard.html";
+
+}
+
+</script>
+
+</body>
+</html>
