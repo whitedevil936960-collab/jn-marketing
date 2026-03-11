@@ -2,37 +2,98 @@
 <html>
 <head>
 <title>Place Order</title>
+<style>
+body{
+  font-family: Arial;
+  text-align:center;
+}
+select,input,button{
+  padding:8px;
+  margin:5px;
+}
+</style>
 </head>
 <body>
 
 <h2>Place Order</h2>
 
 Customer: <input id="cust"><br><br>
-Rate: <input id="rate" type="number"><br><br>
-Qty: <input id="qty" type="number"><br><br>
 
-<button onclick="placeOrder()">Submit</button>
+Product:
+<select id="product" onchange="setRate()">
+<option value="">Select Product</option>
+
+<option value="45">brooms Janata - ₹45</option>
+<option value="70">3T - ₹70</option>
+<option value="99">Jumbo - ₹99 (1kg Powder Free)</option>
+
+<option value="155">Gala King Kong - ₹155</option>
+<option value="119">Gala Lakshmi - ₹119</option>
+<option value="232">Gala 2 in 1 Plastic Jhadu - ₹232</option>
+<option value="135">Gala XL Plastic Jhadu - ₹135</option>
+
+<option value="32">SS Scrub - ₹32 (1+1)</option>
+<option value="11">NSS Scrub - ₹11</option>
+<option value="32.70">Super Scrub - ₹32.70</option>
+
+<option value="172.50">Gala Wiper - ₹172.50</option>
+
+<option value="62.62">DTG Powder 1kg - ₹62.62 (2 ke sath 1 Free)</option>
+<option value="42">dishwas 250g - ₹42</option>
+<option value="60">Hand Wash 250ml - ₹60 (1+1)</option>
+
+<option value="42">Floor Cleaner 1L - ₹42</option>
+<option value="400">Floor Cleaner 5L - ₹400 (1+1 free Cleaner)</option>
+
+<option value="30">Toilet Cleaner 250ml - ₹30</option>
+<option value="92">Toilet Cleaner 500ml - ₹92 (1 ke sath 1 Free)</option>
+
+</select>
+
+<br><br>
+
+Rate: <input id="rate" readonly><br><br>
+Qty: <input id="qty" type="number" oninput="calculateTotal()"><br><br>
+
+<h3 id="total"></h3>
+
+<button onclick="placeOrder()">Submit Order</button>
 
 <script>
 
 let user = JSON.parse(localStorage.getItem("user"));
-
 if(!user){
   window.location="index.html";
+}
+
+function setRate(){
+let rate = document.getElementById("product").value;
+document.getElementById("rate").value = rate;
+calculateTotal();
+}
+
+function calculateTotal(){
+let rate = +document.getElementById("rate").value;
+let qty = +document.getElementById("qty").value;
+let total = rate * qty;
+document.getElementById("total").innerHTML = "Total: ₹" + (total || 0);
 }
 
 function placeOrder(){
 
 let cust = document.getElementById("cust").value;
+let productText = document.getElementById("product").options[document.getElementById("product").selectedIndex].text;
 let rate = +document.getElementById("rate").value;
 let qty = +document.getElementById("qty").value;
-
 let total = rate * qty;
 
 let orders = JSON.parse(localStorage.getItem("orders") || "[]");
 
 orders.push({
 customer:cust,
+product:productText,
+rate:rate,
+qty:qty,
 total:total
 });
 
