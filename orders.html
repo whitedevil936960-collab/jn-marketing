@@ -1,178 +1,168 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>JN Marketing - Order</title>
-
+<title>Multi Product Order</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-
 body{
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+padding:20px;
 }
-
 .card{
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(15px);
-  padding:30px;
-  width:90%;
-  max-width:400px;
-  border-radius:20px;
-  box-shadow:0 0 30px rgba(0,0,0,0.4);
-  color:white;
-  text-align:center;
+background:rgba(255,255,255,0.1);
+padding:20px;
+border-radius:15px;
+max-width:700px;
+margin:auto;
+backdrop-filter:blur(10px);
 }
-
-h2{
-  margin-bottom:20px;
-}
-
 select,input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  border-radius:10px;
-  outline:none;
-  font-size:15px;
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:8px;
+border:none;
 }
-
-input[readonly]{
-  background:#ddd;
-}
-
 button{
-  width:100%;
-  padding:12px;
-  margin-top:15px;
-  border:none;
-  border-radius:10px;
-  background:#00c6ff;
-  background: linear-gradient(to right,#0072ff,#00c6ff);
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.3s;
+padding:10px;
+margin:8px 0;
+border:none;
+border-radius:8px;
+background:linear-gradient(to right,#00c6ff,#0072ff);
+color:white;
+font-weight:bold;
+cursor:pointer;
 }
-
-button:hover{
-  transform:scale(1.05);
+.item{
+background:rgba(255,255,255,0.2);
+padding:8px;
+margin:5px 0;
+border-radius:8px;
 }
-
 .total{
-  font-size:18px;
-  margin-top:10px;
-  color:#00ffcc;
+font-size:18px;
+color:#00ffcc;
+margin-top:10px;
 }
-
 </style>
 </head>
-
 <body>
 
 <div class="card">
 
-<h2>Place Order</h2>
+<h2>Place Multi Product Order</h2>
 
-<input id="cust" placeholder="Customer Name">
+<input id="customer" placeholder="Dukandar Name">
 
-<select id="product" onchange="setRate()">
+<select id="product">
 <option value="">Select Product</option>
-
-<option value="45">Janta Broom - ₹45</option>
-<option value="70">3T Broom - ₹70</option>
-<option value="99">Jumbo - ₹99 (1kg DTG Free)</option>
+<option value="45">Janta - ₹45</option>
+<option value="70">3T - ₹70</option>
+<option value="99">Jumbo - ₹99</option>
 <option value="155">Gala King Kong - ₹155</option>
-
-<option value="32">SS Scrub - ₹32 (1+1)</option>
+<option value="32">SS Scrub - ₹32</option>
 <option value="11">NS Scrub - ₹11</option>
 <option value="32.70">Super Scrub - ₹32.70</option>
-
 <option value="172.50">Gala Wiper - ₹172.50</option>
-
 <option value="22">Dishwash 250g - ₹22</option>
 <option value="42">Dishwash 500g - ₹42</option>
-
-<option value="60">Handwash 250ml - ₹60 (+1 Free)</option>
-
+<option value="60">Handwash 250ml - ₹60</option>
 <option value="42">Floor Cleaner 1L - ₹42</option>
-<option value="400">Floor Cleaner 5L - ₹400 (1+1)</option>
-
+<option value="400">Floor Cleaner 5L - ₹400</option>
 <option value="30">Toilet Cleaner 250ml - ₹30</option>
-<option value="92">Toilet Cleaner 500ml - ₹92 (1+1)</option>
-
+<option value="92">Toilet Cleaner 500ml - ₹92</option>
 </select>
 
-<input id="rate" placeholder="Rate" readonly>
+<input id="qty" type="number" placeholder="Quantity">
 
-<input id="qty" type="number" placeholder="Quantity" oninput="calculateTotal()">
+<button onclick="addProduct()">Add Product</button>
 
-<div class="total" id="total">Total: ₹0</div>
+<div id="cart"></div>
 
-<button onclick="placeOrder()">Submit Order</button>
+<div class="total" id="grandTotal">Grand Total: ₹0</div>
+
+<button onclick="saveOrder()">Submit Order</button>
 
 </div>
 
 <script>
 
 let user = JSON.parse(localStorage.getItem("user"));
-if(!user){
-  window.location="index.html";
+if(!user){window.location="index.html";}
+
+let cart=[];
+let grandTotal=0;
+
+function addProduct(){
+
+let productSelect=document.getElementById("product");
+let productName=productSelect.options[productSelect.selectedIndex].text;
+let rate=parseFloat(productSelect.value);
+let qty=parseFloat(document.getElementById("qty").value);
+
+if(!rate || !qty){
+alert("Select product & quantity");
+return;
 }
 
-function setRate(){
-let rate = document.getElementById("product").value;
-document.getElementById("rate").value = rate;
-calculateTotal();
-}
+let total=rate*qty;
 
-function calculateTotal(){
-let rate = parseFloat(document.getElementById("rate").value) || 0;
-let qty = parseFloat(document.getElementById("qty").value) || 0;
-let total = rate * qty;
-document.getElementById("total").innerHTML = "Total: ₹" + total.toFixed(2);
-}
-
-function placeOrder(){
-
-let cust = document.getElementById("cust").value;
-let productSelect = document.getElementById("product");
-let productText = productSelect.options[productSelect.selectedIndex].text;
-let rate = parseFloat(document.getElementById("rate").value) || 0;
-let qty = parseFloat(document.getElementById("qty").value) || 0;
-let total = rate * qty;
-
-if(cust=="" || rate==0 || qty==0){
-  alert("Fill all details properly");
-  return;
-}
-
-let orders = JSON.parse(localStorage.getItem("orders") || "[]");
-
-orders.push({
-customer:cust,
-product:productText,
+cart.push({
+name:productName,
 rate:rate,
 qty:qty,
 total:total
 });
 
-localStorage.setItem("orders", JSON.stringify(orders));
-
-alert("Order Saved! ₹" + total.toFixed(2));
-
-document.getElementById("cust").value="";
+grandTotal+=total;
+updateCart();
 document.getElementById("qty").value="";
-document.getElementById("rate").value="";
-document.getElementById("total").innerHTML="Total: ₹0";
+}
 
+function updateCart(){
+let html="";
+cart.forEach(item=>{
+html+=`<div class="item">
+<b>${item.name}</b><br>
+Rate: ₹${item.rate} | Qty: ${item.qty}<br>
+Total: ₹${item.total}
+</div>`;
+});
+document.getElementById("cart").innerHTML=html;
+document.getElementById("grandTotal").innerHTML="Grand Total: ₹"+grandTotal.toFixed(2);
+}
+
+function saveOrder(){
+
+let customer=document.getElementById("customer").value;
+
+if(customer=="" || cart.length==0){
+alert("Enter dukandar name and add products");
+return;
+}
+
+let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+
+orders.push({
+customer:customer,
+salesman:user.name,
+role:user.role,
+items:cart,
+total:grandTotal,
+date:new Date().toLocaleDateString(),
+time:new Date().toLocaleTimeString()
+});
+
+localStorage.setItem("orders",JSON.stringify(orders));
+
+alert("Order Saved Successfully!");
+
+cart=[];
+grandTotal=0;
+updateCart();
+document.getElementById("customer").value="";
 }
 
 </script>
