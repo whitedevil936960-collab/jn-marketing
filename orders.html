@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Place Order</title>
+</head>
+<body>
+
+<h2>Place Order</h2>
+
+Customer: <input id="cust"><br><br>
+Rate: <input id="rate" type="number"><br><br>
+Qty: <input id="qty" type="number"><br><br>
+
+<button onclick="placeOrder()">Submit</button>
+
+<script>
+
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+  window.location="index.html";
+}
+
+function placeOrder(){
+
+let cust = document.getElementById("cust").value;
+let rate = +document.getElementById("rate").value;
+let qty = +document.getElementById("qty").value;
+
+let total = rate * qty;
+
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+orders.push({
+customer:cust,
+total:total
+});
+
+localStorage.setItem("orders", JSON.stringify(orders));
+
+alert("Order Saved! Total = ₹" + total);
+
+}
+
+</script>
+
+</body>
+</html>
