@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reports</title>
+</head>
+<body>
+
+<h2>Sales Report</h2>
+
+<div id="report"></div>
+
+<script>
+
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+  window.location="index.html";
+}
+
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+let totalSale = 0;
+let html = "";
+
+if(orders.length === 0){
+  html = "No Orders Yet";
+}else{
+
+orders.forEach(o => {
+  html += "<p>₹" + o.total + "</p>";
+  totalSale += o.total;
+});
+
+html += "<hr>";
+html += "<h3>Total Sale: ₹" + totalSale + "</h3>";
+}
+
+document.getElementById("report").innerHTML = html;
+
+</script>
+
+</body>
+</html>
