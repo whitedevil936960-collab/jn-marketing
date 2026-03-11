@@ -1,115 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Attendance - JN Marketing</title>
+<title>Attendance System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
-margin:0;
 font-family:'Segoe UI',sans-serif;
-background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+padding:20px;
 }
 .card{
 background:rgba(255,255,255,0.1);
-padding:30px;
-border-radius:20px;
-backdrop-filter:blur(12px);
-width:90%;
-max-width:400px;
-text-align:center;
-box-shadow:0 0 25px rgba(0,0,0,0.4);
+padding:20px;
+border-radius:15px;
+max-width:700px;
+margin:auto;
+backdrop-filter:blur(10px);
 }
 button{
-width:100%;
-padding:12px;
-margin-top:15px;
+padding:10px;
+margin:10px 0;
 border:none;
-border-radius:10px;
-background: linear-gradient(to right,#00c6ff,#0072ff);
+border-radius:8px;
+background:linear-gradient(to right,#00c6ff,#0072ff);
 color:white;
 font-weight:bold;
 cursor:pointer;
 }
-button:hover{
-transform:scale(1.05);
-}
 .record{
 background:rgba(255,255,255,0.2);
-margin-top:10px;
 padding:8px;
+margin:5px 0;
 border-radius:8px;
-font-size:14px;
 }
 </style>
 </head>
-
 <body>
 
 <div class="card">
 
 <h2>Attendance System</h2>
-
-<h3 id="userName"></h3>
+<h3 id="userInfo"></h3>
 
 <button onclick="markAttendance()">Mark Attendance</button>
 
-<div id="records"></div>
+<h3>Attendance Report</h3>
+<div id="attendanceList"></div>
 
 </div>
 
 <script>
 
 let user = JSON.parse(localStorage.getItem("user"));
-if(!user){
-window.location="index.html";
-}
+if(!user){window.location="index.html";}
 
-document.getElementById("userName").innerHTML =
+document.getElementById("userInfo").innerHTML=
 user.name + " (" + user.role + ")";
 
 function markAttendance(){
 
-let now = new Date();
-let date = now.toLocaleDateString();
-let time = now.toLocaleTimeString();
-
-let attendance = JSON.parse(localStorage.getItem("attendance") || "[]");
+let attendance = JSON.parse(localStorage.getItem("attendance")||"[]");
 
 attendance.push({
 name:user.name,
 role:user.role,
-date:date,
-time:time
+date:new Date().toLocaleDateString(),
+time:new Date().toLocaleTimeString()
 });
 
-localStorage.setItem("attendance", JSON.stringify(attendance));
+localStorage.setItem("attendance",JSON.stringify(attendance));
 
-alert("Attendance Marked Successfully!");
+alert("Attendance Marked!");
 
 loadAttendance();
 }
 
 function loadAttendance(){
 
-let attendance = JSON.parse(localStorage.getItem("attendance") || "[]");
-
+let attendance = JSON.parse(localStorage.getItem("attendance")||"[]");
 let html="";
 
 attendance.forEach(a=>{
-if(a.name===user.name || user.role==="CMO"){
-html += "<div class='record'>"
-+ a.name + "<br>"
-+ a.date + " | " + a.time
-+ "</div>";
+if(user.role==="CMO" || a.name===user.name){
+html+=`<div class="record">
+<b>${a.name}</b> (${a.role})<br>
+${a.date} | ${a.time}
+</div>`;
 }
 });
 
-document.getElementById("records").innerHTML = html;
+document.getElementById("attendanceList").innerHTML=html;
 }
 
 loadAttendance();
