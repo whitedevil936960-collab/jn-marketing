@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Attendance</title>
+<title>Attendance System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
-font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#141e30,#243b55);
+font-family:'Segoe UI';
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 padding:20px;
 }
@@ -20,6 +20,7 @@ backdrop-filter:blur(10px);
 }
 button{
 padding:10px;
+margin:5px;
 border:none;
 border-radius:8px;
 background:linear-gradient(to right,#00c6ff,#0072ff);
@@ -30,9 +31,11 @@ cursor:pointer;
 .record{
 background:rgba(255,255,255,0.2);
 padding:8px;
-margin:5px 0;
+margin:6px 0;
 border-radius:8px;
 }
+.present{color:#00ff99;}
+.absent{color:#ff4444;}
 </style>
 </head>
 <body>
@@ -42,7 +45,8 @@ border-radius:8px;
 <h2>Attendance</h2>
 <h3 id="userInfo"></h3>
 
-<button onclick="markAttendance()">Mark Attendance</button>
+<button onclick="markAttendance('Present')">Mark Present</button>
+<button onclick="markAttendance('Absent')">Mark Absent</button>
 
 <h3>Attendance Report</h3>
 <div id="attendanceList"></div>
@@ -54,23 +58,33 @@ border-radius:8px;
 let user=JSON.parse(localStorage.getItem("user"));
 if(!user){window.location="index.html";}
 
-document.getElementById("userInfo").innerHTML=user.name+" ("+user.role+")";
+document.getElementById("userInfo").innerHTML=
+user.name+" ("+user.role+")";
 
-function markAttendance(){
+function markAttendance(status){
 
+let today=new Date().toLocaleDateString();
 let attendance=JSON.parse(localStorage.getItem("attendance")||"[]");
+
+// duplicate check
+let already=attendance.find(a=>a.name===user.name && a.date===today);
+
+if(already){
+alert("Attendance already marked today!");
+return;
+}
 
 attendance.push({
 name:user.name,
 role:user.role,
-date:new Date().toLocaleDateString(),
+status:status,
+date:today,
 time:new Date().toLocaleTimeString()
 });
 
 localStorage.setItem("attendance",JSON.stringify(attendance));
 
 alert("Attendance Marked!");
-
 loadAttendance();
 }
 
@@ -80,12 +94,19 @@ let attendance=JSON.parse(localStorage.getItem("attendance")||"[]");
 let html="";
 
 attendance.forEach(a=>{
+
 if(user.role==="CMO" || a.name===user.name){
+
+let colorClass = a.status==="Present" ? "present" : "absent";
+
 html+=`<div class="record">
 <b>${a.name}</b> (${a.role})<br>
+<span class="${colorClass}">${a.status}</span><br>
 ${a.date} | ${a.time}
 </div>`;
+
 }
+
 });
 
 document.getElementById("attendanceList").innerHTML=html;
