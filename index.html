@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JN Marketing Login</title>
+</head>
+<body>
+
+<h2>Login</h2>
+
+<input id="email" placeholder="Enter Email">
+<button onclick="loginUser()">Login</button>
+
+<script>
+
+function loginUser(){
+
+let email = document.getElementById("email").value;
+
+let users = [
+  {name:"Chandrabhaskar", email:"cmo@gmail.com", role:"CMO"},
+  {name:"Rohit", email:"rohit@gmail.com", role:"TL"},
+  {name:"Amit", email:"amit@gmail.com", role:"FSI"}
+];
+
+let user = users.find(u => u.email === email);
+
+if(!user){
+  alert("User Not Found");
+  return;
+}
+
+localStorage.setItem("user", JSON.stringify(user));
+window.location="dashboard.html";
+
+}
+
+</script>
+
+</body>
+</html>
