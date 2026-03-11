@@ -18,10 +18,10 @@ height:100vh;
 background:rgba(255,255,255,0.1);
 padding:30px;
 border-radius:15px;
-backdrop-filter:blur(10px);
 width:90%;
 max-width:400px;
 text-align:center;
+backdrop-filter:blur(10px);
 }
 a{
 display:block;
@@ -44,24 +44,24 @@ color:white;
 <a href="orders.html">Place Order</a>
 <a href="reports.html">Sales Report</a>
 <a href="attendance.html">Attendance</a>
-<a href="dashboard.html">Dashboard</a>
-<a href="index.html" onclick="logout()">Logout</a>
+<a href="#" onclick="logout()">Logout</a>
 
 </div>
 
 <script>
 
-let user=JSON.parse(localStorage.getItem("user"));
+let user = JSON.parse(localStorage.getItem("user"));
 
 if(!user){
 window.location="index.html";
 }
 
-document.getElementById("welcome").innerHTML=
-"Welcome "+user.name+" ("+user.role+")";
+document.getElementById("welcome").innerHTML =
+"Welcome " + user.name + " (" + user.role + ")";
 
 function logout(){
 localStorage.removeItem("user");
+window.location="index.html";
 }
 
 </script>
