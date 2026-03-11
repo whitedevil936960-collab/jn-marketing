@@ -1,52 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Dashboard</title>
+<title>JN Marketing Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
-background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+background:linear-gradient(135deg,#141e30,#243b55);
 color:white;
-text-align:center;
-padding:40px;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
 .card{
 background:rgba(255,255,255,0.1);
 padding:30px;
 border-radius:15px;
 backdrop-filter:blur(10px);
+width:90%;
 max-width:400px;
-margin:auto;
+text-align:center;
 }
 a{
 display:block;
-margin:15px 0;
+margin:12px 0;
 padding:12px;
-background: linear-gradient(to right,#0072ff,#00c6ff);
-color:white;
-text-decoration:none;
 border-radius:8px;
+text-decoration:none;
 font-weight:bold;
+background:linear-gradient(to right,#00c6ff,#0072ff);
+color:white;
 }
-a:hover{transform:scale(1.05);}
 </style>
 </head>
 <body>
 
 <div class="card">
+
 <h2 id="welcome"></h2>
+
 <a href="orders.html">Place Order</a>
 <a href="reports.html">Sales Report</a>
-<a href="index.html">Logout</a>
+<a href="attendance.html">Attendance</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="index.html" onclick="logout()">Logout</a>
+
 </div>
 
 <script>
+
 let user=JSON.parse(localStorage.getItem("user"));
-if(!user){window.location="index.html";}
+
+if(!user){
+window.location="index.html";
+}
+
 document.getElementById("welcome").innerHTML=
 "Welcome "+user.name+" ("+user.role+")";
+
+function logout(){
+localStorage.removeItem("user");
+}
+
 </script>
 
 </body>
