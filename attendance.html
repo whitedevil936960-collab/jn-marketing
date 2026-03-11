@@ -1,120 +1,102 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Attendance System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{
-font-family:'Segoe UI';
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:white;
-padding:20px;
-}
-.card{
-background:rgba(255,255,255,0.1);
-padding:20px;
-border-radius:15px;
-max-width:700px;
-margin:auto;
-backdrop-filter:blur(10px);
-}
-button{
-padding:10px;
-margin:5px;
-border:none;
-border-radius:8px;
-background:linear-gradient(to right,#00c6ff,#0072ff);
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-.record{
-background:rgba(255,255,255,0.2);
-padding:8px;
-margin:6px 0;
-border-radius:8px;
-}
-.present{color:#00ff99;}
-.absent{color:#ff4444;}
-</style>
-</head>
-<body>
+import React, { useState, useEffect } from "react";
 
-<div class="card">
+const AttendanceApp = () => {
+  const today = new Date();
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth());
+  const [attendance, setAttendance] = useState({});
 
-<h2>Attendance</h2>
-<h3 id="userInfo"></h3>
+  // Load saved data
+  useEffect(() => {
+    const saved = localStorage.getItem("attendance");
+    if (saved) setAttendance(JSON.parse(saved));
+  }, []);
 
-<button onclick="markAttendance('Present')">Mark Present</button>
-<button onclick="markAttendance('Absent')">Mark Absent</button>
+  // Save to localStorage
+  useEffect(() => {
+    localStorage.setItem("attendance", JSON.stringify(attendance));
+  }, [attendance]);
 
-<h3>Attendance Report</h3>
-<div id="attendanceList"></div>
+  // Get all days of the selected month
+  const getDaysInMonth = (year, month) => {
+    const date = new Date(year, month, 1);
+    const days = [];
+    while (date.getMonth() === month) {
+      days.push(new Date(date));
+      date.setDate(date.getDate() + 1);
+    }
+    return days;
+  };
 
-</div>
+  const handleToggle = (date) => {
+    const dateKey = date.toISOString().split("T")[0];
+    const current = attendance[dateKey];
+    const now = new Date();
 
-<script>
+    // 12 ghante ke andar edit allow
+    if (current) {
+      const oldTime = new Date(current.timestamp);
+      const diffHours = (now - oldTime) / (1000 * 60 * 60);
+      if (diffHours > 12) {
+        alert("12 ghante ke baad change allowed nahi hai!");
+        return;
+      }
+    }
 
-let user=JSON.parse(localStorage.getItem("user"));
-if(!user){window.location="index.html";}
+    setAttendance({
+      ...attendance,
+      [dateKey]: {
+        status: current?.status === "Present" ? "Absent" : "Present",
+        time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: now,
+      },
+    });
+  };
 
-document.getElementById("userInfo").innerHTML=
-user.name+" ("+user.role+")";
+  const days = getDaysInMonth(year, month);
 
-function markAttendance(status){
+  return (
+    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <h2>Attendance Calendar - {year} / {month + 1}</h2>
 
-let today=new Date().toLocaleDateString();
-let attendance=JSON.parse(localStorage.getItem("attendance")||"[]");
+      <div style={{ marginBottom: "20px" }}>
+        <button onClick={() => setMonth((m) => (m - 1 + 12) % 12)}>Prev Month</button>
+        <button onClick={() => setMonth((m) => (m + 1) % 12)}>Next Month</button>
+        <button onClick={() => setYear((y) => y - 1)}>Prev Year</button>
+        <button onClick={() => setYear((y) => y + 1)}>Next Year</button>
+      </div>
 
-// duplicate check
-let already=attendance.find(a=>a.name===user.name && a.date===today);
+      <table border="1" cellPadding="10">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {days.map((date) => {
+            const dateKey = date.toISOString().split("T")[0];
+            const entry = attendance[dateKey];
+            return (
+              <tr key={dateKey}>
+                <td>{date.toDateString()}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={entry?.status === "Present"}
+                    onChange={() => handleToggle(date)}
+                  />{" "}
+                  {entry?.status || "None"}
+                </td>
+                <td>{entry?.time || "-"}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
-if(already){
-alert("Attendance already marked today!");
-return;
-}
-
-attendance.push({
-name:user.name,
-role:user.role,
-status:status,
-date:today,
-time:new Date().toLocaleTimeString()
-});
-
-localStorage.setItem("attendance",JSON.stringify(attendance));
-
-alert("Attendance Marked!");
-loadAttendance();
-}
-
-function loadAttendance(){
-
-let attendance=JSON.parse(localStorage.getItem("attendance")||"[]");
-let html="";
-
-attendance.forEach(a=>{
-
-if(user.role==="CMO" || a.name===user.name){
-
-let colorClass = a.status==="Present" ? "present" : "absent";
-
-html+=`<div class="record">
-<b>${a.name}</b> (${a.role})<br>
-<span class="${colorClass}">${a.status}</span><br>
-${a.date} | ${a.time}
-</div>`;
-
-}
-
-});
-
-document.getElementById("attendanceList").innerHTML=html;
-}
-
-loadAttendance();
-
-</script>
-
-</body>
-</html>
+export default AttendanceApp;
