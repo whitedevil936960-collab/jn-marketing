@@ -1,86 +1,120 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Place Order</title>
+<title>JN Marketing - Order</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
+
 body{
-  font-family: Arial;
-  text-align:center;
-  background:#f2f2f2;
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
-.container{
-  background:white;
-  padding:20px;
-  margin:20px;
-  border-radius:10px;
-  box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-select,input,button{
-  padding:8px;
-  margin:8px;
-  width:80%;
-}
-button{
-  background:#007bff;
+
+.card{
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  padding:30px;
+  width:90%;
+  max-width:400px;
+  border-radius:20px;
+  box-shadow:0 0 30px rgba(0,0,0,0.4);
   color:white;
+  text-align:center;
+}
+
+h2{
+  margin-bottom:20px;
+}
+
+select,input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
   border:none;
+  border-radius:10px;
+  outline:none;
+  font-size:15px;
 }
-h3{
-  color:green;
+
+input[readonly]{
+  background:#ddd;
 }
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  border-radius:10px;
+  background:#00c6ff;
+  background: linear-gradient(to right,#0072ff,#00c6ff);
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+.total{
+  font-size:18px;
+  margin-top:10px;
+  color:#00ffcc;
+}
+
 </style>
 </head>
+
 <body>
 
-<div class="container">
+<div class="card">
 
 <h2>Place Order</h2>
 
-Customer Name:<br>
-<input id="cust" placeholder="Enter Customer Name"><br>
+<input id="cust" placeholder="Customer Name">
 
-Product:<br>
 <select id="product" onchange="setRate()">
 <option value="">Select Product</option>
 
-<!-- BROOMS -->
 <option value="45">Janta Broom - ₹45</option>
 <option value="70">3T Broom - ₹70</option>
-<option value="99">Jumbo - ₹99 (1kg DTG Powder Free)</option>
+<option value="99">Jumbo - ₹99 (1kg DTG Free)</option>
 <option value="155">Gala King Kong - ₹155</option>
 
-<!-- SCRUB -->
-<option value="32">SS Scrub - ₹32 (1+1 Free)</option>
+<option value="32">SS Scrub - ₹32 (1+1)</option>
 <option value="11">NS Scrub - ₹11</option>
 <option value="32.70">Super Scrub - ₹32.70</option>
 
-<!-- WIPER -->
 <option value="172.50">Gala Wiper - ₹172.50</option>
 
-<!-- DISHWASH -->
 <option value="22">Dishwash 250g - ₹22</option>
 <option value="42">Dishwash 500g - ₹42</option>
 
-<!-- HANDWASH -->
 <option value="60">Handwash 250ml - ₹60 (+1 Free)</option>
 
-<!-- FLOOR CLEANER -->
 <option value="42">Floor Cleaner 1L - ₹42</option>
-<option value="400">Floor Cleaner 5L - ₹400 (1+1 Free)</option>
+<option value="400">Floor Cleaner 5L - ₹400 (1+1)</option>
 
-<!-- TOILET CLEANER -->
 <option value="30">Toilet Cleaner 250ml - ₹30</option>
-<option value="92">Toilet Cleaner 500ml - ₹92 (1+1 Free)</option>
+<option value="92">Toilet Cleaner 500ml - ₹92 (1+1)</option>
 
-</select><br>
+</select>
 
-Rate:<br>
-<input id="rate" readonly><br>
+<input id="rate" placeholder="Rate" readonly>
 
-Quantity:<br>
-<input id="qty" type="number" oninput="calculateTotal()"><br>
+<input id="qty" type="number" placeholder="Quantity" oninput="calculateTotal()">
 
-<h3 id="total">Total: ₹0</h3>
+<div class="total" id="total">Total: ₹0</div>
 
 <button onclick="placeOrder()">Submit Order</button>
 
@@ -116,7 +150,7 @@ let qty = parseFloat(document.getElementById("qty").value) || 0;
 let total = rate * qty;
 
 if(cust=="" || rate==0 || qty==0){
-  alert("Please fill all details properly");
+  alert("Fill all details properly");
   return;
 }
 
@@ -132,7 +166,7 @@ total:total
 
 localStorage.setItem("orders", JSON.stringify(orders));
 
-alert("Order Saved Successfully! Total = ₹" + total.toFixed(2));
+alert("Order Saved! ₹" + total.toFixed(2));
 
 document.getElementById("cust").value="";
 document.getElementById("qty").value="";
