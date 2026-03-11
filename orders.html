@@ -4,62 +4,20 @@
 <title>JN Marketing - Order System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{
-font-family:Segoe UI;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:white;
-padding:20px;
-}
-.card{
-background:rgba(255,255,255,0.1);
-padding:20px;
-border-radius:15px;
-max-width:1000px;
-margin:auto;
-backdrop-filter:blur(10px);
-}
-input,select{
-width:100%;
-padding:10px;
-margin:6px 0;
-border-radius:8px;
-border:none;
-}
-button{
-padding:8px 12px;
-margin:4px;
-border:none;
-border-radius:8px;
-background:linear-gradient(to right,#00c6ff,#0072ff);
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
+body{font-family:Segoe UI; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); color:white; padding:20px;}
+.card{background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; max-width:1000px; margin:auto; backdrop-filter:blur(10px);}
+input, select{width:100%; padding:10px; margin:6px 0; border-radius:8px; border:none;}
+button{padding:8px 12px; margin:4px; border:none; border-radius:8px; background:linear-gradient(to right,#00c6ff,#0072ff); color:white; font-weight:bold; cursor:pointer;}
 .edit-btn{background:#ff9800;}
 .delete-btn{background:#ff4444;}
-.item{
-background:rgba(255,255,255,0.2);
-padding:8px;
-margin:6px 0;
-border-radius:8px;
-}
-.total{
-font-size:18px;
-color:#00ffcc;
-margin-top:10px;
-}
-.order-box{
-background:rgba(0,0,0,0.3);
-padding:10px;
-margin-top:15px;
-border-radius:10px;
-}
+.item{background:rgba(255,255,255,0.2); padding:8px; margin:6px 0; border-radius:8px;}
+.total{font-size:18px; color:#00ffcc; margin-top:10px;}
+.order-box{background:rgba(0,0,0,0.3); padding:10px; margin-top:15px; border-radius:10px;}
 </style>
 </head>
 <body>
 
 <div class="card">
-
 <h2>Place Order</h2>
 
 <input id="customer" placeholder="Dukandar Name">
@@ -103,45 +61,141 @@ border-radius:10px;
 <hr>
 <h2>All Orders / Sales Report</h2>
 <div id="orderList"></div>
-
 </div>
 
 <script>
+// Dummy login user
+let user = {name:"Rohit", role:"TL"};
 
-// Dummy login user (replace with real login)
-let user = JSON.parse(localStorage.getItem("user")) || {name:"Rohit",role:"TL"};
+let cart = [];
+let grandTotal = 0;
 
-let cart=[];
-let grandTotal=0;
-
+// Add product to cart
 function addProduct(){
-let select=document.getElementById("product");
-if(select.value==""){alert("Select product"); return;}
+    let prodSelect = document.getElementById("product");
+    let qty = parseFloat(document.getElementById("qty").value);
 
-let name=select.options[select.selectedIndex].text;
-let rate=parseFloat(select.value);
-let qty=parseFloat(document.getElementById("qty").value);
+    if(!prodSelect.value){ alert("Select product"); return; }
+    if(!qty || qty <=0){ alert("Enter valid quantity"); return; }
 
-if(!qty){alert("Enter quantity"); return;}
+    let name = prodSelect.options[prodSelect.selectedIndex].text;
+    let rate = parseFloat(prodSelect.value);
+    let total = rate * qty;
 
-let total=rate*qty;
-
-cart.push({name,rate,qty,total});
-updateCart();
-document.getElementById("qty").value="";
+    cart.push({name, rate, qty, total});
+    updateCart();
+    document.getElementById("qty").value = "";
 }
 
+// Update cart display
 function updateCart(){
-grandTotal=0;
-let html="";
-cart.forEach((item,index)=>{
-grandTotal+=item.total;
-html+=`<div class="item">
-<b>${item.name}</b><br>
-Rate ₹${item.rate} | Qty ${item.qty} | Total ₹${item.total}<br>
-<button class="edit-btn" onclick="editCartItem(${index})">Edit</button>
-<button class="delete-btn" onclick="deleteCartItem(${index})">Delete</button>
-</div>`;
-});
-document.getElementById("cart").innerHTML=html;
-document.get
+    grandTotal = 0;
+    let html = "";
+    cart.forEach((p,i)=>{
+        grandTotal += p.total;
+        html += `<div class="item"><b>${p.name}</b> | ₹${p.rate} x ${p.qty} = ₹${p.total.toFixed(2)}
+        <br><button class="edit-btn" onclick="editCartItem(${i})">Edit</button>
+        <button class="delete-btn" onclick="deleteCartItem(${i})">Delete</button></div>`;
+    });
+    document.getElementById("cart").innerHTML = html;
+    document.getElementById("grandTotal").innerText = "Grand Total: ₹"+grandTotal.toFixed(2);
+}
+
+// Edit item in cart
+function editCartItem(i){
+    let newQty = prompt("Enter new quantity:", cart[i].qty);
+    if(newQty==null) return;
+    newQty = parseFloat(newQty);
+    if(!newQty || newQty<=0) return;
+    cart[i].qty = newQty;
+    cart[i].total = cart[i].rate*newQty;
+    updateCart();
+}
+
+// Delete item from cart
+function deleteCartItem(i){
+    cart.splice(i,1);
+    updateCart();
+}
+
+// Submit order
+function submitOrder(){
+    let customer = document.getElementById("customer").value;
+    let address = document.getElementById("address").value;
+    let mobile = document.getElementById("mobile").value;
+    let payment = document.getElementById("payment").value;
+
+    if(!customer || !address || !mobile || !payment || cart.length==0){
+        alert("Fill all details & add products"); return;
+    }
+
+    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
+    orders.push({
+        customer,address,mobile,payment,
+        salesman:user.name,
+        role:user.role,
+        items:cart,
+        total:grandTotal,
+        datetime: new Date().toLocaleString()
+    });
+    localStorage.setItem("orders",JSON.stringify(orders));
+
+    // Reset cart
+    cart = [];
+    grandTotal=0;
+    updateCart();
+    document.getElementById("customer").value="";
+    document.getElementById("address").value="";
+    document.getElementById("mobile").value="";
+    document.getElementById("payment").value="";
+
+    loadOrders();
+}
+
+// Load orders / sales report
+function loadOrders(){
+    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
+    let html = "";
+    orders.forEach((o,index)=>{
+        html += `<div class="order-box">
+        <b>Dukandar:</b> ${o.customer}<br>
+        <b>Address:</b> ${o.address}<br>
+        <b>Mobile:</b> ${o.mobile}<br>
+        <b>Salesman:</b> ${o.salesman} (${o.role})<br>
+        <b>Payment:</b> ${o.payment}<br>
+        <b>Date & Time:</b> ${o.datetime}<br>`;
+        o.items.forEach(p=>{
+            html += `${p.name} | ₹${p.rate} x ${p.qty} = ₹${p.total.toFixed(2)}<br>`;
+        });
+        html += `<b>Total:</b> ₹${o.total.toFixed(2)}<br>
+        <button class="edit-btn" onclick="editOrder(${index})">Edit Payment</button>
+        <button class="delete-btn" onclick="deleteOrder(${index})">Delete Order</button>
+        </div>`;
+    });
+    document.getElementById("orderList").innerHTML = html;
+}
+
+// Delete order
+function deleteOrder(i){
+    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
+    orders.splice(i,1);
+    localStorage.setItem("orders",JSON.stringify(orders));
+    loadOrders();
+}
+
+// Edit payment status
+function editOrder(i){
+    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
+    let newPay = prompt("Change Payment Status (Received/Pending):",orders[i].payment);
+    if(newPay){
+        orders[i].payment = newPay;
+        localStorage.setItem("orders",JSON.stringify(orders));
+        loadOrders();
+    }
+}
+
+loadOrders();
+</script>
+
+</body>
+</html>
