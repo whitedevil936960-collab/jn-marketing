@@ -5,31 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
-margin:0;
 font-family:'Segoe UI',sans-serif;
-background: linear-gradient(135deg,#141e30,#243b55);
+background:linear-gradient(135deg,#141e30,#243b55);
 color:white;
-text-align:center;
-padding:30px;
+padding:20px;
 }
 .card{
 background:rgba(255,255,255,0.1);
-padding:25px;
+padding:20px;
 border-radius:15px;
-backdrop-filter:blur(10px);
-max-width:500px;
+max-width:800px;
 margin:auto;
+backdrop-filter:blur(10px);
 }
 .order{
 background:rgba(255,255,255,0.2);
-margin:10px 0;
 padding:10px;
-border-radius:8px;
+margin:10px 0;
+border-radius:10px;
 }
 .total{
-font-size:20px;
 color:#00ffcc;
-margin-top:20px;
+font-weight:bold;
 }
 </style>
 </head>
@@ -47,18 +44,27 @@ if(!user){window.location="index.html";}
 
 let orders=JSON.parse(localStorage.getItem("orders")||"[]");
 
-let totalSale=0;
 let html="";
+let overallTotal=0;
 
-if(orders.length==0){
-html="No Orders Yet";
-}else{
-orders.forEach(o=>{
-html+="<div class='order'>"+o.product+"<br>₹"+o.total+"</div>";
-totalSale+=o.total;
+orders.forEach(order=>{
+
+html+=`<div class="order">
+<b>Dukandar:</b> ${order.customer}<br>
+<b>Salesman:</b> ${order.salesman} (${order.role})<br>
+<b>Date:</b> ${order.date} | ${order.time}<br><br>`;
+
+order.items.forEach(item=>{
+html+=`${item.name} | Rate: ₹${item.rate} | Qty: ${item.qty} | ₹${item.total}<br>`;
 });
-html+="<div class='total'>Total Sale: ₹"+totalSale.toFixed(2)+"</div>";
-}
+
+html+=`<div class="total">Order Total: ₹${order.total}</div></div>`;
+
+overallTotal+=order.total;
+
+});
+
+html+=`<h3>Total Sale: ₹${overallTotal.toFixed(2)}</h3>`;
 
 document.getElementById("report").innerHTML=html;
 
