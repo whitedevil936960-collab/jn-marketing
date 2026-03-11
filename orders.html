@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Multi Product Order</title>
+<title>JN Marketing - Order</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
@@ -14,11 +14,11 @@ padding:20px;
 background:rgba(255,255,255,0.1);
 padding:20px;
 border-radius:15px;
-max-width:700px;
+max-width:800px;
 margin:auto;
 backdrop-filter:blur(10px);
 }
-select,input{
+input,select{
 width:100%;
 padding:10px;
 margin:8px 0;
@@ -52,9 +52,17 @@ margin-top:10px;
 
 <div class="card">
 
-<h2>Place Multi Product Order</h2>
+<h2>Place Order</h2>
 
 <input id="customer" placeholder="Dukandar Name">
+<input id="address" placeholder="Address">
+<input id="mobile" placeholder="Mobile Number">
+
+<select id="payment">
+<option value="">Select Payment Status</option>
+<option value="Received">Received</option>
+<option value="Pending">Pending</option>
+</select>
 
 <select id="product">
 <option value="">Select Product</option>
@@ -80,7 +88,6 @@ margin-top:10px;
 <button onclick="addProduct()">Add Product</button>
 
 <div id="cart"></div>
-
 <div class="total" id="grandTotal">Grand Total: ₹0</div>
 
 <button onclick="saveOrder()">Submit Order</button>
@@ -109,14 +116,9 @@ return;
 
 let total=rate*qty;
 
-cart.push({
-name:productName,
-rate:rate,
-qty:qty,
-total:total
-});
-
+cart.push({name:productName,rate:rate,qty:qty,total:total});
 grandTotal+=total;
+
 updateCart();
 document.getElementById("qty").value="";
 }
@@ -137,16 +139,19 @@ document.getElementById("grandTotal").innerHTML="Grand Total: ₹"+grandTotal.to
 function saveOrder(){
 
 let customer=document.getElementById("customer").value;
+let address=document.getElementById("address").value;
+let mobile=document.getElementById("mobile").value;
+let payment=document.getElementById("payment").value;
 
-if(customer=="" || cart.length==0){
-alert("Enter dukandar name and add products");
+if(customer=="" || address=="" || mobile=="" || payment=="" || cart.length==0){
+alert("Fill all details & add products");
 return;
 }
 
 let orders=JSON.parse(localStorage.getItem("orders")||"[]");
 
 orders.push({
-customer:customer,
+customer,address,mobile,payment,
 salesman:user.name,
 role:user.role,
 items:cart,
@@ -157,12 +162,16 @@ time:new Date().toLocaleTimeString()
 
 localStorage.setItem("orders",JSON.stringify(orders));
 
-alert("Order Saved Successfully!");
+alert("Order Submitted Successfully!");
 
 cart=[];
 grandTotal=0;
 updateCart();
+
 document.getElementById("customer").value="";
+document.getElementById("address").value="";
+document.getElementById("mobile").value="";
+document.getElementById("payment").value="";
 }
 
 </script>
