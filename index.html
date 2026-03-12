@@ -6,163 +6,288 @@
 <title>JN Marketing | Corporate Portal</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 :root{
---primary:#0f172a;
 --accent:#d4af37;
 --text:#f8fafc;
 --success:#10b981;
 --danger:#ef4444;
---bg-glass: rgba(255,255,255,0.05);
+--bg:rgba(255,255,255,0.05);
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-body{background:#020617;color:var(--text); min-height:100vh;}
+body{background:#020617;color:var(--text);}
 .container{max-width:1200px;margin:auto;padding:20px;}
-.glass{background:var(--bg-glass);padding:25px;border-radius:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.1);}
-.logo{font-size:28px;font-weight:800;color:var(--accent);}
-.nav{display:flex;gap:10px;margin:20px 0;flex-wrap:wrap;}
-.nav button{flex:1;min-width:120px;padding:12px;border:none;border-radius:8px;cursor:pointer;background:rgba(255,255,255,0.05);color:white;}
-.nav button.active{background:var(--accent);color:black;font-weight:bold;}
+.glass{background:var(--bg);padding:20px;border-radius:12px;margin-bottom:20px;}
+.logo{font-size:26px;font-weight:bold;color:var(--accent);}
+.nav button{padding:10px;border:none;margin-right:5px;border-radius:6px;background:var(--bg);color:white;cursor:pointer;}
+.nav button.active{background:var(--accent);color:black;}
 .section{display:none;}
 .section.active{display:block;}
-input,select{width:100%;padding:12px;margin-bottom:15px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.2);color:white;}
-.btn{padding:12px;width:100%;border:none;border-radius:8px;background:var(--accent);font-weight:bold;cursor:pointer;}
-.logout{background:var(--danger);color:white;width:auto;padding:10px 20px;}
-.total-box{margin-top:15px;font-size:18px;font-weight:bold;color:var(--accent);}
-
-/* Login */
-#login{position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;display:flex;justify-content:center;align-items:center;z-index:1000;}
-.login-box{width:350px;text-align:center;}
-.role-btn{width:100%;padding:12px;margin-bottom:10px;background:rgba(255,255,255,0.1);border:none;color:white;border-radius:8px;cursor:pointer;}
+input,select{width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #333;background:#111;color:white;}
+.btn{padding:8px 12px;border:none;border-radius:6px;cursor:pointer;}
+.btn-primary{background:var(--accent);color:black;}
+.btn-danger{background:var(--danger);color:white;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{border:1px solid #333;padding:8px;text-align:left;}
+th{color:var(--accent);}
+#login{position:fixed;width:100%;height:100%;background:#020617;display:flex;justify-content:center;align-items:center;}
+.login-box{width:320px;text-align:center;}
+.role-btn{width:100%;padding:10px;margin-bottom:10px;background:#111;color:white;border:none;border-radius:6px;cursor:pointer;}
 .role-btn:hover{background:var(--accent);color:black;}
 </style>
 </head>
-
 <body>
 
 <!-- LOGIN -->
 <div id="login">
 <div class="glass login-box">
 <h2 class="logo">JN MARKETING</h2>
-<p style="margin:15px 0;color:gray;">Authorized Access Only</p>
-
-<button class="role-btn" onclick="login('whitedevil936960@gmail.com','Team Leader')">
-<i class="fas fa-user-tie"></i> Team Leader Login
-</button>
-
-<button class="role-btn" onclick="login('Maurya.chandrabhaskar@gmail.com','CMO')">
-<i class="fas fa-user-tie"></i> CMO Login
-</button>
-
+<button class="role-btn" onclick="login('whitedevil936960@gmail.com','Team Leader')">Team Leader Login</button>
+<button class="role-btn" onclick="login('Maurya.chandrabhaskar@gmail.com','CMO')">CMO Login</button>
 </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div class="container" id="app" style="display:none;">
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+<div style="display:flex;justify-content:space-between;">
 <div class="logo">JN Marketing</div>
 <div>
-<span id="userInfo" style="margin-right:15px;font-size:0.9em;color:#ccc;"></span>
-<button class="btn logout" onclick="logout()">Logout</button>
+<span id="userInfo"></span>
+<button class="btn btn-danger" onclick="logout()">Logout</button>
 </div>
 </div>
 
-<div class="nav">
+<div class="nav" style="margin:15px 0;">
 <button class="active" onclick="show('order',this)">New Order</button>
-<button onclick="show('report',this)">Sales Report</button>
 <button onclick="show('attendance',this)">Attendance</button>
 </div>
 
-<!-- ORDER -->
+<!-- ORDER SECTION -->
 <div id="order" class="section active glass">
 <h3>Place Order</h3>
 
-<label>Select Product</label>
-<select id="product" onchange="setRate()">
-<option value="">-- Select Product --</option>
-</select>
+<input type="text" id="shopName" placeholder="Dukandar Name">
+<input type="text" id="shopAddress" placeholder="Address">
+<input type="text" id="shopMobile" placeholder="Mobile Number">
 
-<label>Rate (₹)</label>
+<select id="product"></select>
 <input type="number" id="rate" readonly>
+<input type="number" id="qty" placeholder="Quantity" oninput="calcTotal()">
 
-<label>Quantity</label>
-<input type="number" id="qty" oninput="calcTotal()">
+<b>Total ₹ <span id="total">0</span></b><br><br>
 
-<div class="total-box">
-Total: ₹ <span id="total">0</span>
-</div>
+<button class="btn btn-primary" onclick="saveOrder()">Save Order</button>
 
-</div>
+<table>
+<thead>
+<tr>
+<th>Shop</th>
+<th>Product</th>
+<th>Total</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="orderList"></tbody>
+</table>
 
-<!-- REPORT -->
-<div id="report" class="section glass">
-<h3>Sales Report</h3>
-<p>Report section coming soon...</p>
 </div>
 
 <!-- ATTENDANCE -->
 <div id="attendance" class="section glass">
 <h3>Attendance</h3>
-<p>Attendance section coming soon...</p>
+
+<input type="date" id="attDate">
+<select id="attStatus">
+<option value="Present">Present</option>
+<option value="Absent">Absent</option>
+</select>
+
+<button class="btn btn-primary" onclick="saveAttendance()">Save</button>
+
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="attList"></tbody>
+</table>
+
 </div>
 
 </div>
 
 <script>
 
-// ================= LOGIN SYSTEM =================
-let currentUser = "";
-
-function login(email, role){
-currentUser = role + " (" + email + ")";
+// LOGIN
+function login(email,role){
 document.getElementById("login").style.display="none";
 document.getElementById("app").style.display="block";
-document.getElementById("userInfo").innerText=currentUser;
+document.getElementById("userInfo").innerText=role+" ("+email+")";
 }
-
 function logout(){
 document.getElementById("login").style.display="flex";
 document.getElementById("app").style.display="none";
 }
 
-// ================= NAVIGATION =================
+// NAV
 function show(id,btn){
-document.querySelectorAll(".section").forEach(sec=>sec.classList.remove("active"));
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
 btn.classList.add("active");
 }
 
-// ================= PRODUCT SYSTEM =================
+// PRODUCT LIST
 const products={
-"LED TV":15000,
-"Mobile Phone":12000,
-"Laptop":45000
+"🧹 Janta":45,
+"🧹 3T":70,
+"🧹 Jumbo":99,
+"🧹 Gala King Kong":155,
+"🧽 SS Scrub":32,
+"🧽 NS Scrub":11,
+"🧽 Super Scrub":32.70,
+"🪣 Gala Wiper":172.50,
+"🍽 Dishwash 250g":22,
+"🍽 Dishwash 500g":42,
+"🧴 Handwash 250ml":60,
+"🧼 Floor Cleaner 1L":42,
+"🧼 Floor Cleaner 5L":400,
+"🚽 Toilet Cleaner 250ml":30,
+"🚽 Toilet Cleaner 500ml":92,
+"Coco 400g":35
 };
 
+let orders=JSON.parse(localStorage.getItem("orders"))||[];
+let attendance=JSON.parse(localStorage.getItem("attendance"))||[];
+let editIndex=null;
+
+// Load Products
 window.onload=function(){
 let select=document.getElementById("product");
-for(let item in products){
-let option=document.createElement("option");
-option.value=item;
-option.textContent=item;
-select.appendChild(option);
+select.innerHTML="<option value=''>Select Product</option>";
+for(let p in products){
+let op=document.createElement("option");
+op.value=p;
+op.textContent=p;
+select.appendChild(op);
 }
+renderOrders();
+renderAttendance();
 };
 
-function setRate(){
-let product=document.getElementById("product").value;
-document.getElementById("rate").value=products[product]||0;
+document.getElementById("product").onchange=function(){
+document.getElementById("rate").value=products[this.value]||0;
 calcTotal();
-}
+};
 
 function calcTotal(){
-let rate=parseFloat(document.getElementById("rate").value)||0;
-let qty=parseFloat(document.getElementById("qty").value)||0;
-document.getElementById("total").innerText=rate*qty;
+let r=parseFloat(document.getElementById("rate").value)||0;
+let q=parseFloat(document.getElementById("qty").value)||0;
+document.getElementById("total").innerText=r*q;
+}
+
+// SAVE ORDER
+function saveOrder(){
+let data={
+shop:document.getElementById("shopName").value,
+address:document.getElementById("shopAddress").value,
+mobile:document.getElementById("shopMobile").value,
+product:document.getElementById("product").value,
+total:document.getElementById("total").innerText
+};
+
+if(editIndex!=null){
+orders[editIndex]=data;
+editIndex=null;
+}else{
+orders.push(data);
+}
+
+localStorage.setItem("orders",JSON.stringify(orders));
+renderOrders();
+}
+
+// RENDER ORDER
+function renderOrders(){
+let list=document.getElementById("orderList");
+list.innerHTML="";
+orders.forEach((o,i)=>{
+list.innerHTML+=`
+<tr>
+<td>${o.shop}<br>${o.mobile}</td>
+<td>${o.product}</td>
+<td>₹${o.total}</td>
+<td>
+<button onclick="editOrder(${i})">Edit</button>
+<button onclick="deleteOrder(${i})">Delete</button>
+</td>
+</tr>`;
+});
+}
+
+function editOrder(i){
+let o=orders[i];
+document.getElementById("shopName").value=o.shop;
+document.getElementById("shopAddress").value=o.address;
+document.getElementById("shopMobile").value=o.mobile;
+document.getElementById("product").value=o.product;
+document.getElementById("rate").value=products[o.product];
+document.getElementById("qty").value=o.total/products[o.product];
+calcTotal();
+editIndex=i;
+}
+
+function deleteOrder(i){
+orders.splice(i,1);
+localStorage.setItem("orders",JSON.stringify(orders));
+renderOrders();
+}
+
+// ATTENDANCE
+function saveAttendance(){
+let data={
+date:document.getElementById("attDate").value,
+status:document.getElementById("attStatus").value
+};
+attendance.push(data);
+localStorage.setItem("attendance",JSON.stringify(attendance));
+renderAttendance();
+}
+
+function renderAttendance(){
+let list=document.getElementById("attList");
+list.innerHTML="";
+attendance.forEach((a,i)=>{
+list.innerHTML+=`
+<tr>
+<td>${a.date}</td>
+<td>${a.status}</td>
+<td>
+<button onclick="editAtt(${i})">Edit</button>
+<button onclick="deleteAtt(${i})">Delete</button>
+</td>
+</tr>`;
+});
+}
+
+function editAtt(i){
+let a=attendance[i];
+document.getElementById("attDate").value=a.date;
+document.getElementById("attStatus").value=a.status;
+attendance.splice(i,1);
+localStorage.setItem("attendance",JSON.stringify(attendance));
+renderAttendance();
+}
+
+function deleteAtt(i){
+attendance.splice(i,1);
+localStorage.setItem("attendance",JSON.stringify(attendance));
+renderAttendance();
 }
 
 </script>
