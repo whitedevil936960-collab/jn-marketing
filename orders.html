@@ -1,67 +1,199 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>JN Marketing - Order System</title>
+<title>JN Marketing - VIP Order System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{font-family:Segoe UI; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); color:white; padding:20px;}
-.card{background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; max-width:1000px; margin:auto; backdrop-filter:blur(10px);}
-input, select{width:100%; padding:10px; margin:6px 0; border-radius:8px; border:none;}
-button{padding:8px 12px; margin:4px; border:none; border-radius:8px; background:linear-gradient(to right,#00c6ff,#0072ff); color:white; font-weight:bold; cursor:pointer;}
-.edit-btn{background:#ff9800;}
-.delete-btn{background:#ff4444;}
-.item{background:rgba(255,255,255,0.2); padding:8px; margin:6px 0; border-radius:8px;}
-.total{font-size:18px; color:#00ffcc; margin-top:10px;}
-.order-box{background:rgba(0,0,0,0.3); padding:10px; margin-top:15px; border-radius:10px;}
+    :root {
+        --primary: #00c6ff;
+        --secondary: #0072ff;
+        --bg-dark: #0f2027;
+        --glass: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        padding: 20px;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .card {
+        background: var(--glass);
+        padding: 30px;
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 10px;
+        margin-top: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Form Styling */
+    input, select {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(0,0,0,0.2);
+        color: white;
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: 0.3s;
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: rgba(0,0,0,0.4);
+    }
+
+    /* Buttons */
+    button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-size: 14px;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+    }
+
+    .edit-btn { background: linear-gradient(to right, #ff9800, #f57c00); }
+    .delete-btn { background: linear-gradient(to right, #ff4444, #d32f2f); }
+    .submit-btn { background: linear-gradient(to right, #00b09b, #96c93d); width: 100%; font-size: 18px; margin-top: 15px;}
+
+    /* Cart Items */
+    .item {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid var(--primary);
+    }
+
+    .item-info { flex-grow: 1; }
+    .item-actions { white-space: nowrap; }
+
+    .total {
+        font-size: 24px;
+        color: #00ffcc;
+        margin-top: 20px;
+        text-align: right;
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    }
+
+    /* Order List */
+    .order-box {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        font-size: 0.9em;
+        color: #ccc;
+    }
+
+    .order-items {
+        font-size: 0.9em;
+        color: #ddd;
+    }
+
+    .order-total {
+        text-align: right;
+        color: #00ffcc;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
 </style>
 </head>
 <body>
 
-<div class="card">
-<h2>Place Order</h2>
+<div class="container">
+    <div class="card">
+        <h2>📦 VIP Order Entry</h2>
 
-<input id="customer" placeholder="Dukandar Name">
-<input id="address" placeholder="Address">
-<input id="mobile" placeholder="Mobile Number">
+        <input id="customer" placeholder="👤 Dukandar Name">
+        <input id="address" placeholder="📍 Address">
+        <input id="mobile" placeholder="📱 Mobile Number">
 
-<select id="payment">
-<option value="">Payment Status</option>
-<option value="Received">Received</option>
-<option value="Pending">Pending</option>
-</select>
+        <select id="payment">
+            <option value="">💰 Payment Status</option>
+            <option value="Received">Received</option>
+            <option value="Pending">Pending</option>
+        </select>
 
-<select id="product">
-<option value="">Select Product</option>
-<option value="45">Janta - ₹45</option>
-<option value="70">3T - ₹70</option>
-<option value="99">Jumbo - ₹99 + 1kg t.d.g.powder free</option>
-<option value="155">Gala King Kong - ₹155</option>
-<option value="32">SS Scrub - ₹32 1+1</option>
-<option value="11">NS Scrub - ₹11</option>
-<option value="32.70">Super Scrub - ₹32.70</option>
-<option value="172.50">Gala Wiper - ₹172.50</option>
-<option value="22">Dishwash 250g - ₹22</option>
-<option value="42">Dishwash 500g - ₹42</option>
-<option value="60">Handwash 250ml - ₹60</option>
-<option value="42">Floor Cleaner 1L - ₹42</option>
-<option value="400">Floor Cleaner 5L - ₹400 1+1</option>
-<option value="30">Toilet Cleaner 250ml - ₹30</option>
-<option value="92">Toilet Cleaner 500ml - ₹92 1+1</option>
-<option value="35">coco 400g - ₹35</option>
-</select>
-    
-<input id="qty" type="number" placeholder="Quantity">
+        <select id="product">
+            <option value="">🛒 Select Product</option>
+            <option value="45">Janta - ₹45</option>
+            <option value="70">3T - ₹70</option>
+            <option value="99">Jumbo - ₹99 + 1kg t.d.g.powder free</option>
+            <option value="155">Gala King Kong - ₹155</option>
+            <option value="32">SS Scrub - ₹32 1+1</option>
+            <option value="11">NS Scrub - ₹11</option>
+            <option value="32.70">Super Scrub - ₹32.70</option>
+            <option value="172.50">Gala Wiper - ₹172.50</option>
+            <option value="22">Dishwash 250g - ₹22</option>
+            <option value="42">Dishwash 500g - ₹42</option>
+            <option value="60">Handwash 250ml - ₹60</option>
+            <option value="42">Floor Cleaner 1L - ₹42</option>
+            <option value="400">Floor Cleaner 5L - ₹400 1+1</option>
+            <option value="30">Toilet Cleaner 250ml - ₹30</option>
+            <option value="92">Toilet Cleaner 500ml - ₹92 1+1</option>
+            <option value="35">coco 400g - ₹35</option>
+        </select>
+        
+        <input id="qty" type="number" placeholder="Quantity (Qty)">
 
-<button onclick="addProduct()">Add Product</button>
+        <button onclick="addProduct()">➕ Add to Cart</button>
 
-<div id="cart"></div>
-<div class="total" id="grandTotal">Grand Total: ₹0</div>
+        <div id="cart"></div>
+        <div class="total" id="grandTotal">Grand Total: ₹0.00</div>
 
-<button onclick="submitOrder()">Submit Order</button>
+        <button class="submit-btn" onclick="submitOrder()">✅ Submit Order</button>
+    </div>
 
-<hr>
-<h2>All Orders / Sales Report</h2>
-<div id="orderList"></div>
+    <div class="card">
+        <h2>📊 All Orders / Sales Report</h2>
+        <div id="orderList"></div>
+    </div>
 </div>
 
 <script>
@@ -70,14 +202,15 @@ let user = {name:"Rohit", role:"TL"};
 
 let cart = [];
 let grandTotal = 0;
+let orders = []; // To store submitted orders
 
 // Add product to cart
 function addProduct(){
     let prodSelect = document.getElementById("product");
     let qty = parseFloat(document.getElementById("qty").value);
 
-    if(!prodSelect.value){ alert("Select product"); return; }
-    if(!qty || qty <=0){ alert("Enter valid quantity"); return; }
+    if(!prodSelect.value){ alert("Please Select a Product"); return; }
+    if(!qty || qty <=0){ alert("Please Enter valid Quantity"); return; }
 
     let name = prodSelect.options[prodSelect.selectedIndex].text;
     let rate = parseFloat(prodSelect.value);
@@ -86,18 +219,33 @@ function addProduct(){
     cart.push({name, rate, qty, total});
     updateCart();
     document.getElementById("qty").value = "";
+    document.getElementById("qty").focus();
 }
 
 // Update cart display
 function updateCart(){
     grandTotal = 0;
     let html = "";
-    cart.forEach((p,i)=>{
-        grandTotal += p.total;
-        html += `<div class="item"><b>${p.name}</b> | ₹${p.rate} x ${p.qty} = ₹${p.total.toFixed(2)}
-        <br><button class="edit-btn" onclick="editCartItem(${i})">Edit</button>
-        <button class="delete-btn" onclick="deleteCartItem(${i})">Delete</button></div>`;
-    });
+    
+    if(cart.length === 0){
+        html = "<div style='text-align:center; color:#aaa; padding:20px;'>Cart is empty</div>";
+    } else {
+        cart.forEach((p,i)=>{
+            grandTotal += p.total;
+            html += `
+            <div class="item">
+                <div class="item-info">
+                    <b>${p.name}</b><br>
+                    <small>₹${p.rate} x ${p.qty} = ₹${p.total.toFixed(2)}</small>
+                </div>
+                <div class="item-actions">
+                    <button class="edit-btn" onclick="editCartItem(${i})">Edit</button>
+                    <button class="delete-btn" onclick="deleteCartItem(${i})">X</button>
+                </div>
+            </div>`;
+        });
+    }
+    
     document.getElementById("cart").innerHTML = html;
     document.getElementById("grandTotal").innerText = "Grand Total: ₹"+grandTotal.toFixed(2);
 }
@@ -105,98 +253,113 @@ function updateCart(){
 // Edit item in cart
 function editCartItem(i){
     let newQty = prompt("Enter new quantity:", cart[i].qty);
-    if(newQty==null) return;
+    if(newQty == null) return;
+    
     newQty = parseFloat(newQty);
-    if(!newQty || newQty<=0) return;
-    cart[i].qty = newQty;
-    cart[i].total = cart[i].rate*newQty;
-    updateCart();
+    if(newQty > 0){
+        cart[i].qty = newQty;
+        cart[i].total = cart[i].rate * newQty;
+        updateCart();
+    } else {
+        alert("Quantity must be greater than 0");
+    }
 }
 
 // Delete item from cart
 function deleteCartItem(i){
-    cart.splice(i,1);
-    updateCart();
+    if(confirm("Remove this item?")){
+        cart.splice(i, 1);
+        updateCart();
+    }
 }
 
-// Submit order
+// Submit Order
 function submitOrder(){
+    if(cart.length === 0){
+        alert("Cart is empty! Add products first.");
+        return;
+    }
+
     let customer = document.getElementById("customer").value;
     let address = document.getElementById("address").value;
     let mobile = document.getElementById("mobile").value;
     let payment = document.getElementById("payment").value;
 
-    if(!customer || !address || !mobile || !payment || cart.length==0){
-        alert("Fill all details & add products"); return;
+    if(!customer || !mobile){
+        alert("Please fill in Customer Name and Mobile Number.");
+        return;
     }
 
-    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
-    orders.push({
-        customer,address,mobile,payment,
-        salesman:user.name,
-        role:user.role,
-        items:cart,
-        total:grandTotal,
-        datetime: new Date().toLocaleString()
-    });
-    localStorage.setItem("orders",JSON.stringify(orders));
+    let order = {
+        id: Date.now(),
+        date: new Date().toLocaleString(),
+        customer,
+        address,
+        mobile,
+        payment,
+        items: [...cart],
+        total: grandTotal
+    };
 
-    // Reset cart
+    orders.unshift(order); // Add to top of list
+    saveOrders();
+    
+    // Reset Form
     cart = [];
-    grandTotal=0;
+    grandTotal = 0;
+    document.getElementById("customer").value = "";
+    document.getElementById("address").value = "";
+    document.getElementById("mobile").value = "";
+    document.getElementById("payment").value = "";
+    document.getElementById("product").value = "";
+    document.getElementById("qty").value = "";
+    
     updateCart();
-    document.getElementById("customer").value="";
-    document.getElementById("address").value="";
-    document.getElementById("mobile").value="";
-    document.getElementById("payment").value="";
-
-    loadOrders();
+    renderOrders();
+    alert("Order Placed Successfully!");
 }
 
-// Load orders / sales report
+// Save to LocalStorage (so data doesn't disappear on refresh)
+function saveOrders(){
+    localStorage.setItem('jn_orders', JSON.stringify(orders));
+}
+
+// Load from LocalStorage
 function loadOrders(){
-    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
+    let stored = localStorage.getItem('jn_orders');
+    if(stored){
+        orders = JSON.parse(stored);
+        renderOrders();
+    }
+}
+
+// Render Order List
+function renderOrders(){
     let html = "";
-    orders.forEach((o,index)=>{
-        html += `<div class="order-box">
-        <b>Dukandar:</b> ${o.customer}<br>
-        <b>Address:</b> ${o.address}<br>
-        <b>Mobile:</b> ${o.mobile}<br>
-        <b>Salesman:</b> ${o.salesman} (${o.role})<br>
-        <b>Payment:</b> ${o.payment}<br>
-        <b>Date & Time:</b> ${o.datetime}<br>`;
-        o.items.forEach(p=>{
-            html += `${p.name} | ₹${p.rate} x ${p.qty} = ₹${p.total.toFixed(2)}<br>`;
-        });
-        html += `<b>Total:</b> ₹${o.total.toFixed(2)}<br>
-        <button class="edit-btn" onclick="editOrder(${index})">Edit Payment</button>
-        <button class="delete-btn" onclick="deleteOrder(${index})">Delete Order</button>
+    orders.forEach(o => {
+        let itemsHtml = o.items.map(i => `${i.qty}x ${i.name}`).join(", ");
+        html += `
+        <div class="order-box">
+            <div class="order-header">
+                <span>📅 ${o.date}</span>
+                <span>👤 ${o.customer}</span>
+                <span>📞 ${o.mobile}</span>
+                <span>💳 ${o.payment}</span>
+            </div>
+            <div class="order-items">
+                ${itemsHtml}
+            </div>
+            <div class="order-total">
+                Total: ₹${o.total.toFixed(2)}
+            </div>
         </div>`;
     });
     document.getElementById("orderList").innerHTML = html;
 }
 
-// Delete order
-function deleteOrder(i){
-    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
-    orders.splice(i,1);
-    localStorage.setItem("orders",JSON.stringify(orders));
-    loadOrders();
-}
-
-// Edit payment status
-function editOrder(i){
-    let orders = JSON.parse(localStorage.getItem("orders")||"[]");
-    let newPay = prompt("Change Payment Status (Received/Pending):",orders[i].payment);
-    if(newPay){
-        orders[i].payment = newPay;
-        localStorage.setItem("orders",JSON.stringify(orders));
-        loadOrders();
-    }
-}
-
+// Initialize
 loadOrders();
-</script>
 
+</script>
 </body>
 </html>
