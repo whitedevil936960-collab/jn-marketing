@@ -6,7 +6,6 @@
 <title>JN Marketing | Corporate Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
 :root{
 --primary:#0f172a;
@@ -57,29 +56,23 @@ th {color: var(--accent);}
 @keyframes fadeIn {from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);}}
 </style>
 </head>
-
 <body>
-
 <!-- LOGIN SCREEN -->
 <div id="login">
 <div class="glass login-box">
 <h2 class="logo">JN MARKETING</h2>
 <p style="margin:15px 0;color:gray;">Authorized Access Only</p>
-
 <button class="role-btn" onclick="login('whitedevil936960@gmail.com','Team Leader')">
 <i class="fas fa-user-tie"></i> Team Leader Login
 </button>
-
 <button class="role-btn" onclick="login('Maurya.chandrabhaskar@gmail.com','CMO')">
 <i class="fas fa-user-tie"></i> CMO Login
 </button>
-
 </div>
 </div>
 
 <!-- MAIN APP -->
 <div class="container" id="app" style="display:none;">
-
 <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom: 20px;">
 <div class="logo">JN Marketing</div>
 <div>
@@ -87,7 +80,6 @@ th {color: var(--accent);}
 <button class="btn logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
 </div>
 </div>
-
 <div class="nav">
 <button class="active" onclick="show('order',this)"><i class="fas fa-plus-circle"></i> New Order</button>
 <button onclick="show('report',this)"><i class="fas fa-chart-line"></i> Sales Report</button>
@@ -110,7 +102,6 @@ th {color: var(--accent);}
         <input type="number" id="rate" placeholder="0.00" readonly>
     </div>
 </div>
-
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
     <div>
         <label>Quantity</label>
@@ -121,7 +112,6 @@ th {color: var(--accent);}
         <input type="text" id="total" placeholder="0.00" readonly style="color: var(--accent); font-weight: bold;">
     </div>
 </div>
-
 <button class="btn" id="submitBtn" onclick="saveOrder()">Submit Order</button>
 <button class="btn btn-secondary" id="cancelEditBtn" onclick="resetForm()" style="display:none; margin-top: 10px;">Cancel Edit</button>
 </div>
@@ -133,7 +123,6 @@ th {color: var(--accent);}
     <h2 id="totalSales" style="color: var(--accent);">₹0</h2>
     <button class="btn btn-secondary" onclick="renderOrders()" style="width: auto;"><i class="fas fa-sync"></i> Refresh</button>
 </div>
-
 <div class="glass" style="padding: 10px;">
     <h4>Order History</h4>
     <div style="overflow-x: auto;">
@@ -161,7 +150,6 @@ th {color: var(--accent);}
     <h3><i class="fas fa-user-clock"></i> Attendance Management</h3>
     <div class="attendance-card">
         <p id="currentDateDisplay" style="color: gray; margin-bottom: 10px;"></p>
-        
         <div id="attendanceStatusDisplay" style="margin: 20px 0;">
             <!-- Status will be injected here -->
         </div>
@@ -172,7 +160,6 @@ th {color: var(--accent);}
         </div>
     </div>
 </div>
-
 </div>
 
 <script>
@@ -347,15 +334,4 @@ function renderOrders() {
 
 function editOrder(index) {
     let order = orders[index];
-    currentEditIndex = index;
-
-    // Find index in product list
-    let prodIndex = products.findIndex(p => p.name === order.product);
-    
-    document.getElementById("product").value = prodIndex;
-    document.getElementById("rate").value = order.rate;
-    document.getElementById("qty").value = order.qty;
-    document.getElementById("total").value = order.total;
-
-    // Change UI for edit mode
-    document.getElementById("submit
+    current
