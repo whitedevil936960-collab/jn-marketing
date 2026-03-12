@@ -1,71 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>JN Marketing Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#141e30,#243b55);
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-.card{
-background:rgba(255,255,255,0.1);
-padding:30px;
-border-radius:15px;
-width:90%;
-max-width:400px;
-text-align:center;
-backdrop-filter:blur(10px);
-}
-a{
-display:block;
-margin:12px 0;
-padding:12px;
-border-radius:8px;
-text-decoration:none;
-font-weight:bold;
-background:linear-gradient(to right,#00c6ff,#0072ff);
-color:white;
-}
-</style>
-</head>
-<body>
+<h2>Attendance</h2>
 
-<div class="card">
+<select id="attStatus">
+  <option value="">Select Status</option>
+  <option value="Present">Present</option>
+  <option value="Absent">Absent</option>
+</select>
 
-<h2 id="welcome"></h2>
+<button onclick="markAttendance()">Submit Attendance</button>
 
-<a href="dashboard.html">Dashboard</a>
-<a href="orders.html">Place Order</a>
-<a href="reports.html">Sales Report</a>
-<a href="attendance.html">Attendance</a>
-<a href="#" onclick="logout()">Logout</a>
-
-</div>
+<div id="attendanceList"></div>
 
 <script>
+function markAttendance(){
+  let status = document.getElementById("attStatus").value;
+  if(!status){ alert("Select status"); return; }
 
-let user = JSON.parse(localStorage.getItem("user"));
+  let attendance = JSON.parse(localStorage.getItem("attendance")||"[]");
 
-if(!user){
-window.location="index.html";
+  attendance.push({
+    name: "Rohit",
+    role: "TL",
+    status: status,
+    datetime: new Date().toLocaleString()
+  });
+
+  localStorage.setItem("attendance",JSON.stringify(attendance));
+  loadAttendance();
 }
 
-document.getElementById("welcome").innerHTML =
-"Welcome " + user.name + " (" + user.role + ")";
-
-function logout(){
-localStorage.removeItem("user");
-window.location="index.html";
+function loadAttendance(){
+  let attendance = JSON.parse(localStorage.getItem("attendance")||"[]");
+  let html = "";
+  attendance.forEach(a=>{
+    html += `<div style="background:rgba(255,255,255,0.2);padding:8px;margin:5px;border-radius:8px;">
+      <b>${a.name}</b> (${a.role}) - ${a.status} <br>
+      ${a.datetime}
+    </div>`;
+  });
+  document.getElementById("attendanceList").innerHTML = html;
 }
 
+loadAttendance();
 </script>
-
-</body>
-</html>
