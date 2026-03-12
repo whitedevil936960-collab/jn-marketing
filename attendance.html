@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 
-const AttendanceApp = () => {
+const months = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+const AttendanceCalendar = () => {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [attendance, setAttendance] = useState({});
 
-  // Load saved data
+  // Load saved data from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("attendance");
     if (saved) setAttendance(JSON.parse(saved));
@@ -17,7 +22,7 @@ const AttendanceApp = () => {
     localStorage.setItem("attendance", JSON.stringify(attendance));
   }, [attendance]);
 
-  // Get all days of the selected month
+  // Generate all days of a month
   const getDaysInMonth = (year, month) => {
     const date = new Date(year, month, 1);
     const days = [];
@@ -29,11 +34,11 @@ const AttendanceApp = () => {
   };
 
   const handleToggle = (date) => {
-    const dateKey = date.toISOString().split("T")[0];
+    const dateKey = date.toISOString().split("T")[0]; // yyyy-mm-dd
     const current = attendance[dateKey];
     const now = new Date();
 
-    // 12 ghante ke andar edit allow
+    // 12 ghante ke andar edit allowed
     if (current) {
       const oldTime = new Date(current.timestamp);
       const diffHours = (now - oldTime) / (1000 * 60 * 60);
@@ -55,23 +60,34 @@ const AttendanceApp = () => {
 
   const days = getDaysInMonth(year, month);
 
+  // Generate years for dropdown (2020 se 2030)
+  const yearOptions = Array.from({ length: 11 }, (_, i) => 2020 + i);
+
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h2>Attendance Calendar - {year} / {month + 1}</h2>
+      <h2>Attendance Calendar</h2>
 
+      {/* Year & Month Selection */}
       <div style={{ marginBottom: "20px" }}>
-        <button onClick={() => setMonth((m) => (m - 1 + 12) % 12)}>Prev Month</button>
-        <button onClick={() => setMonth((m) => (m + 1) % 12)}>Next Month</button>
-        <button onClick={() => setYear((y) => y - 1)}>Prev Year</button>
-        <button onClick={() => setYear((y) => y + 1)}>Next Year</button>
+        Year:{" "}
+        <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+          {yearOptions.map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
+        </select>{" "}
+        Month:{" "}
+        <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+          {months.map((m, idx) => (
+            <option key={idx} value={idx}>{m}</option>
+          ))}
+        </select>
       </div>
 
-      <table border="1" cellPadding="10">
+      <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Time</th>
+            <th style={{ width: "50%" }}>Date & Time</th>
+            <th>Attendance</th>
           </tr>
         </thead>
         <tbody>
@@ -80,8 +96,8 @@ const AttendanceApp = () => {
             const entry = attendance[dateKey];
             return (
               <tr key={dateKey}>
-                <td>{date.toDateString()}</td>
-                <td>
+                <td>{date.toDateString()} {entry?.time ? `- ${entry.time}` : ""}</td>
+                <td style={{ textAlign: "center" }}>
                   <input
                     type="checkbox"
                     checked={entry?.status === "Present"}
@@ -89,7 +105,6 @@ const AttendanceApp = () => {
                   />{" "}
                   {entry?.status || "None"}
                 </td>
-                <td>{entry?.time || "-"}</td>
               </tr>
             );
           })}
@@ -99,4 +114,4 @@ const AttendanceApp = () => {
   );
 };
 
-export default AttendanceApp;
+export default AttendanceCalendar;
