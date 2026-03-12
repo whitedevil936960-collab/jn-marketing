@@ -4,14 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JN Marketing | Corporate Portal</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
 :root{
 --accent:#d4af37;
 --text:#f8fafc;
---success:#10b981;
 --danger:#ef4444;
 --bg:rgba(255,255,255,0.05);
 }
@@ -35,6 +32,7 @@ th{color:var(--accent);}
 .login-box{width:320px;text-align:center;}
 .role-btn{width:100%;padding:10px;margin-bottom:10px;background:#111;color:white;border:none;border-radius:6px;cursor:pointer;}
 .role-btn:hover{background:var(--accent);color:black;}
+optgroup{background:#111;color:#d4af37;}
 </style>
 </head>
 <body>
@@ -64,7 +62,7 @@ th{color:var(--accent);}
 <button onclick="show('attendance',this)">Attendance</button>
 </div>
 
-<!-- ORDER SECTION -->
+<!-- ORDER -->
 <div id="order" class="section active glass">
 <h3>Place Order</h3>
 
@@ -72,11 +70,53 @@ th{color:var(--accent);}
 <input type="text" id="shopAddress" placeholder="Address">
 <input type="text" id="shopMobile" placeholder="Mobile Number">
 
-<select id="product"></select>
-<input type="number" id="rate" readonly>
+<select id="product" onchange="setRate()">
+<option value="">Select Product</option>
+
+<optgroup label="🧹 Brooms">
+<option value="45">Janta – ₹45</option>
+<option value="70">3T – ₹70</option>
+<option value="99">Jumbo – ₹99 (1kg DTG Powder Free)</option>
+<option value="155">Gala King Kong – ₹155</option>
+</optgroup>
+
+<optgroup label="🧽 Scrub">
+<option value="32">SS Scrub – ₹32 (1+1 Free)</option>
+<option value="11">NS Scrub – ₹11</option>
+<option value="32.70">Super Scrub – ₹32.70</option>
+</optgroup>
+
+<optgroup label="🪣 Wiper">
+<option value="172.50">Gala Wiper – ₹172.50</option>
+</optgroup>
+
+<optgroup label="🍽 Dishwash">
+<option value="22">250g – ₹22</option>
+<option value="42">500g – ₹42</option>
+</optgroup>
+
+<optgroup label="🧴 Handwash">
+<option value="60">250ml – ₹60 (+1 Free)</option>
+</optgroup>
+
+<optgroup label="🧼 Floor Cleaner">
+<option value="42">1L – ₹42</option>
+<option value="400">5L – ₹400 (1+1 Free)</option>
+</optgroup>
+
+<optgroup label="🚽 Toilet Cleaner">
+<option value="30">250ml – ₹30</option>
+<option value="92">500ml – ₹92 (1+1 Free)</option>
+</optgroup>
+
+<option value="35">🥥 Coco 400g – ₹35</option>
+
+</select>
+
+<input type="number" id="rate" readonly placeholder="Rate">
 <input type="number" id="qty" placeholder="Quantity" oninput="calcTotal()">
 
-<b>Total ₹ <span id="total">0</span></b><br><br>
+<b>Total ₹ <span id="total">0.00</span></b><br><br>
 
 <button class="btn btn-primary" onclick="saveOrder()">Save Order</button>
 
@@ -91,19 +131,16 @@ th{color:var(--accent);}
 </thead>
 <tbody id="orderList"></tbody>
 </table>
-
 </div>
 
 <!-- ATTENDANCE -->
 <div id="attendance" class="section glass">
 <h3>Attendance</h3>
-
 <input type="date" id="attDate">
 <select id="attStatus">
 <option value="Present">Present</option>
 <option value="Absent">Absent</option>
 </select>
-
 <button class="btn btn-primary" onclick="saveAttendance()">Save</button>
 
 <table>
@@ -116,108 +153,62 @@ th{color:var(--accent);}
 </thead>
 <tbody id="attList"></tbody>
 </table>
-
 </div>
 
 </div>
 
 <script>
 
-// LOGIN
 function login(email,role){
-document.getElementById("login").style.display="none";
-document.getElementById("app").style.display="block";
-document.getElementById("userInfo").innerText=role+" ("+email+")";
+login.style.display="none";
+app.style.display="block";
+userInfo.innerText=role+" ("+email+")";
 }
 function logout(){
-document.getElementById("login").style.display="flex";
-document.getElementById("app").style.display="none";
+login.style.display="flex";
+app.style.display="none";
 }
-
-// NAV
 function show(id,btn){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
 btn.classList.add("active");
 }
-
-// PRODUCT LIST
-const products={
-"🧹 Janta":₹45,
-"🧹 3T":₹70,
-"🧹 Jumbo":₹99, + 1kg d.t.g.powder free,
-"🧹 Gala King Kong":₹155,
-"🧽 SS Scrub":₹32,
-"🧽 NS Scrub":11,
-"🧽 Super Scrub":₹32.70,
-"🪣 Gala Wiper":₹172.50,
-"🍽 Dishwash 250g":₹22,
-"🍽 Dishwash 500g":₹42,
-"🧴 Handwash 250ml":₹60,
-"🧼 Floor Cleaner 1L":₹42,
-"🧼 Floor Cleaner 5L":₹400,1+1
-"🚽 Toilet Cleaner 250ml":₹30,
-"🚽 Toilet Cleaner 500ml":₹92,1+1,
-"Coco 400g":₹35,
-};
+function setRate(){
+rate.value=product.value||0;
+calcTotal();
+}
+function calcTotal(){
+let r=parseFloat(rate.value)||0;
+let q=parseFloat(qty.value)||0;
+total.innerText=(r*q).toFixed(2);
+}
 
 let orders=JSON.parse(localStorage.getItem("orders"))||[];
 let attendance=JSON.parse(localStorage.getItem("attendance"))||[];
 let editIndex=null;
 
-// Load Products
-window.onload=function(){
-let select=document.getElementById("product");
-select.innerHTML="<option value=''>Select Product</option>";
-for(let p in products){
-let op=document.createElement("option");
-op.value=p;
-op.textContent=p;
-select.appendChild(op);
-}
-renderOrders();
-renderAttendance();
-};
-
-document.getElementById("product").onchange=function(){
-document.getElementById("rate").value=products[this.value]||0;
-calcTotal();
-};
-
-function calcTotal(){
-let r=parseFloat(document.getElementById("rate").value)||0;
-let q=parseFloat(document.getElementById("qty").value)||0;
-document.getElementById("total").innerText=r*q;
-}
-
-// SAVE ORDER
 function saveOrder(){
 let data={
-shop:document.getElementById("shopName").value,
-address:document.getElementById("shopAddress").value,
-mobile:document.getElementById("shopMobile").value,
-product:document.getElementById("product").value,
-total:document.getElementById("total").innerText
+shop:shopName.value,
+mobile:shopMobile.value,
+product:product.options[product.selectedIndex].text,
+total:total.innerText
 };
-
 if(editIndex!=null){
 orders[editIndex]=data;
 editIndex=null;
 }else{
 orders.push(data);
 }
-
 localStorage.setItem("orders",JSON.stringify(orders));
 renderOrders();
 }
 
-// RENDER ORDER
 function renderOrders(){
-let list=document.getElementById("orderList");
-list.innerHTML="";
+orderList.innerHTML="";
 orders.forEach((o,i)=>{
-list.innerHTML+=`
+orderList.innerHTML+=`
 <tr>
 <td>${o.shop}<br>${o.mobile}</td>
 <td>${o.product}</td>
@@ -229,66 +220,44 @@ list.innerHTML+=`
 </tr>`;
 });
 }
-
 function editOrder(i){
 let o=orders[i];
-document.getElementById("shopName").value=o.shop;
-document.getElementById("shopAddress").value=o.address;
-document.getElementById("shopMobile").value=o.mobile;
-document.getElementById("product").value=o.product;
-document.getElementById("rate").value=products[o.product];
-document.getElementById("qty").value=o.total/products[o.product];
-calcTotal();
+shopName.value=o.shop;
+shopMobile.value=o.mobile;
 editIndex=i;
 }
-
 function deleteOrder(i){
 orders.splice(i,1);
 localStorage.setItem("orders",JSON.stringify(orders));
 renderOrders();
 }
+renderOrders();
 
-// ATTENDANCE
+// Attendance
 function saveAttendance(){
-let data={
-date:document.getElementById("attDate").value,
-status:document.getElementById("attStatus").value
-};
-attendance.push(data);
+attendance.push({date:attDate.value,status:attStatus.value});
 localStorage.setItem("attendance",JSON.stringify(attendance));
 renderAttendance();
 }
-
 function renderAttendance(){
-let list=document.getElementById("attList");
-list.innerHTML="";
+attList.innerHTML="";
 attendance.forEach((a,i)=>{
-list.innerHTML+=`
+attList.innerHTML+=`
 <tr>
 <td>${a.date}</td>
 <td>${a.status}</td>
 <td>
-<button onclick="editAtt(${i})">Edit</button>
 <button onclick="deleteAtt(${i})">Delete</button>
 </td>
 </tr>`;
 });
 }
-
-function editAtt(i){
-let a=attendance[i];
-document.getElementById("attDate").value=a.date;
-document.getElementById("attStatus").value=a.status;
-attendance.splice(i,1);
-localStorage.setItem("attendance",JSON.stringify(attendance));
-renderAttendance();
-}
-
 function deleteAtt(i){
 attendance.splice(i,1);
 localStorage.setItem("attendance",JSON.stringify(attendance));
 renderAttendance();
 }
+renderAttendance();
 
 </script>
 
