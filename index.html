@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Identity Services -->
+    <!-- Google Identity Services (Kept for reference, but logic below handles the login) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
@@ -222,24 +222,31 @@
         .login-logo { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 10px; }
         .login-subtitle { color: var(--text-dim); margin-bottom: 30px; }
         
-        .google-btn-container {
+        .role-btn {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
             display: flex;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            gap: 10px;
+            font-size: 16px;
         }
         
-        .demo-btn {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text-dim);
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-            width: 100%;
+        .role-btn:hover {
+            background: var(--accent);
+            color: var(--primary);
+            border-color: var(--accent);
+            transform: translateY(-2px);
         }
-        .demo-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .role-btn i { font-size: 18px; }
 
         @media (max-width: 768px) {
             .nav-tabs { flex-direction: column; }
@@ -261,32 +268,18 @@
             <div class="login-logo">JN MARKETING</div>
             <p class="login-subtitle">Corporate Access Portal</p>
             
-            <!-- Google Sign-In Button -->
-            <div class="google-btn-container">
-                <!-- Replace 'YOUR_GOOGLE_CLIENT_ID' with your actual Client ID from Google Cloud Console -->
-                <div id="g_id_onload"
-                     data-client_id="YOUR_GOOGLE_CLIENT_ID"
-                     data-context="signin"
-                     data-ux_mode="popup"
-                     data-callback="handleCredentialResponse"
-                     data-auto_prompt="false">
-                </div>
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-shape="rectangular"
-                     data-theme="outline"
-                     data-text="signin_with"
-                     data-size="large"
-                     data-logo_alignment="left">
-                </div>
-            </div>
-
-            <p style="color: var(--text-dim); font-size: 12px; margin-bottom: 10px;">OR</p>
-
-            <!-- Demo Login for Testing -->
-            <button class="demo-btn" onclick="demoLogin()">
-                <i class="fas fa-user-circle"></i> Continue as Guest (Demo)
+            <!-- Login Buttons for Specific Roles -->
+            <button class="role-btn" onclick="loginUser('whitedevil936960@gmail.com', 'Team Leader')">
+                <i class="fas fa-user-tie"></i> Login as Team Leader
             </button>
+            
+            <button class="role-btn" onclick="loginUser('Maurya.chandrabhaskar@gmail.com', 'CMO')">
+                <i class="fas fa-chess-king"></i> Login as CMO
+            </button>
+
+            <p style="color: var(--text-dim); font-size: 12px; margin-top: 20px;">
+                Secure Access • Authorized Personnel Only
+            </p>
         </div>
     </div>
 
@@ -350,3 +343,13 @@
 
                 <button class="btn-primary" onclick="submitOrder()">Submit Order</button>
             </div>
+        </div>
+
+        <!-- 2. Sales Report Section -->
+        <div id="report" class="section">
+            <div class="glass-panel">
+                <h2 style="margin-bottom: 20px; color: var(--accent);">📊 Sales Performance</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-rupee-sign"></i>
