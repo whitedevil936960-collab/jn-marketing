@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 
 const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
 ];
 
-const AttendanceCalendar = () => {
+// Example employees list (aap customize kar sakte ho)
+const employees = ["Rohit Kumar", "Anjali Sharma", "Suresh Singh", "Pooja Verma"];
+
+const CompanyAttendance = () => {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [attendance, setAttendance] = useState({});
 
-  // Load saved data from localStorage
+  // Load saved attendance from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("attendance");
     if (saved) setAttendance(JSON.parse(saved));
@@ -22,7 +25,7 @@ const AttendanceCalendar = () => {
     localStorage.setItem("attendance", JSON.stringify(attendance));
   }, [attendance]);
 
-  // Generate all days of a month
+  // Generate days in month
   const getDaysInMonth = (year, month) => {
     const date = new Date(year, month, 1);
     const days = [];
@@ -33,85 +36,85 @@ const AttendanceCalendar = () => {
     return days;
   };
 
-  const handleToggle = (date) => {
-    const dateKey = date.toISOString().split("T")[0]; // yyyy-mm-dd
-    const current = attendance[dateKey];
+  const handleToggle = (employee, date) => {
+    const dateKey = date.toISOString().split("T")[0];
     const now = new Date();
+    const current = attendance[employee]?.[dateKey];
 
-    // 12 ghante ke andar edit allowed
+    // 12 ghante limit
     if (current) {
-      const oldTime = new Date(current.timestamp);
-      const diffHours = (now - oldTime) / (1000 * 60 * 60);
+      const diffHours = (now - new Date(current.timestamp)) / (1000 * 60 * 60);
       if (diffHours > 12) {
         alert("12 ghante ke baad change allowed nahi hai!");
         return;
       }
     }
 
-    setAttendance({
-      ...attendance,
-      [dateKey]: {
-        status: current?.status === "Present" ? "Absent" : "Present",
-        time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        timestamp: now,
-      },
-    });
+    setAttendance(prev => ({
+      ...prev,
+      [employee]: {
+        ...prev[employee],
+        [dateKey]: {
+          status: current?.status === "Present" ? "Absent" : "Present",
+          time: now.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"}),
+          timestamp: now
+        }
+      }
+    }));
   };
 
   const days = getDaysInMonth(year, month);
 
-  // Generate years for dropdown (2020 se 2030)
+  // Generate year options
   const yearOptions = Array.from({ length: 11 }, (_, i) => 2020 + i);
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h2>Attendance Calendar</h2>
+    <div style={{ padding:"20px", fontFamily:"Arial" }}>
+      <h2>Company Attendance Sheet</h2>
 
-      {/* Year & Month Selection */}
-      <div style={{ marginBottom: "20px" }}>
+      {/* Year & Month selection */}
+      <div style={{ marginBottom:"20px" }}>
         Year:{" "}
-        <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
-          {yearOptions.map((y) => (
-            <option key={y} value={y}>{y}</option>
-          ))}
+        <select value={year} onChange={e=>setYear(Number(e.target.value))}>
+          {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
         </select>{" "}
         Month:{" "}
-        <select value={month} onChange={(e) => setMonth(Number(e.target.value))}>
-          {months.map((m, idx) => (
-            <option key={idx} value={idx}>{m}</option>
-          ))}
+        <select value={month} onChange={e=>setMonth(Number(e.target.value))}>
+          {months.map((m, idx) => <option key={idx} value={idx}>{m}</option>)}
         </select>
       </div>
 
-      <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table border="1" cellPadding="10" style={{ borderCollapse:"collapse", width:"100%" }}>
         <thead>
           <tr>
-            <th style={{ width: "50%" }}>Date & Time</th>
-            <th>Attendance</th>
+            <th>Employee / Date</th>
+            {days.map(d => <th key={d.toISOString()}>{d.getDate()}</th>)}
           </tr>
         </thead>
         <tbody>
-          {days.map((date) => {
-            const dateKey = date.toISOString().split("T")[0];
-            const entry = attendance[dateKey];
-            return (
-              <tr key={dateKey}>
-                <td>{date.toDateString()} {entry?.time ? `- ${entry.time}` : ""}</td>
-                <td style={{ textAlign: "center" }}>
-                  <input
-                    type="checkbox"
-                    checked={entry?.status === "Present"}
-                    onChange={() => handleToggle(date)}
-                  />{" "}
-                  {entry?.status || "None"}
-                </td>
-              </tr>
-            );
-          })}
+          {employees.map(emp => (
+            <tr key={emp}>
+              <td>{emp}</td>
+              {days.map(date => {
+                const dateKey = date.toISOString().split("T")[0];
+                const entry = attendance[emp]?.[dateKey];
+                return (
+                  <td key={dateKey} style={{ textAlign:"center" }}>
+                    <input 
+                      type="checkbox"
+                      checked={entry?.status==="Present"}
+                      onChange={()=>handleToggle(emp, date)}
+                    /><br/>
+                    {entry?.time || "-"}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
   );
 };
 
-export default AttendanceCalendar;
+export default CompanyAttendance;
